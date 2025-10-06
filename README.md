@@ -177,7 +177,7 @@ CompliSense/
 
 2. **Navigate to the project directory:**  
    ```bash
-   cd compliSense
+   cd CompliSense
    ```
 3. **Create a `.env` file by copying the example:**
 
@@ -190,7 +190,6 @@ CompliSense/
 ```
 GROQ_API_KEY=your_groq_api_key_here
 TAVILY_API_KEY=your_tavily_api_key_here
-
 ```
 
 ### Step 1: Data Ingestion
