@@ -1,0 +1,32 @@
+version: '3.8'
+
+# Define a named volume that Docker will manage
+volumes:
+  compli-sense-data:
+
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./.env:/app/.env:ro
+      # Mount the Docker-managed volume to the data path inside the container
+      - compli-sense-data:/app/data
+    environment:
+      - RBI_DATA_PATH=/app/data
+      - CHROMA_DB_PATH=/app/data/chroma_db # Store chroma_db inside the data volume
+    command: ["streamlit", "run", "src/ui/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    profiles: ["app"]
+
+  ingestor:
+    build: .
+    volumes:
+      - ./.env:/app/.env:ro
+      # The ingestor also uses the same volume to create the data
+      - compli-sense-data:/app/data
+    environment:
+      - RBI_DATA_PATH=/app/data
+      - CHROMA_DB_PATH=/app/data/chroma_db
+    command: ["python", "ingest_data.py"]
+    profiles: ["ingest"]

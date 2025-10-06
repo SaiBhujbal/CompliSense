@@ -1,0 +1,31 @@
+# RBI Document Sources for Compli-Sense
+# To update the knowledge base, modify the URLs or add new entries here and run `python ingest_data.py`
+
+documents:
+  - name: "Master Direction - Non-Banking Financial Company – Peer to Peer Lending Platform (Reserve Bank) Directions, 2017"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1124"
+    file_name: "RBI_P2P_Master_Direction_2017.pdf"
+
+  - name: "Master Direction – NBFC-Factors (Reserve Bank) Directions, 2022"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1232"
+    file_name: "RBI_NBFc_Factors_Direction_2022.pdf"
+
+  - name: "Master Direction – Non-Banking Financial Company – Systemically Important (Reserve Bank) Directions, 2023"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1275"
+    file_name: "RBI_NBFC_SI_Direction_2023.pdf"
+
+  - name: "Master Direction – Digital Lending (Reserve Bank) Directions, 2022"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1249"
+    file_name: "RBI_Digital_Lending_Direction_2022.pdf"
+
+  - name: "Master Direction – Issuance and Operation of Pre-paid Payment Instruments (PPIs) (Reserve Bank) Directions, 2022"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1247"
+    file_name: "RBI_PPI_Master_Direction_2022.pdf"
+
+  - name: "Master Direction – Card Tokenisation (Reserve Bank) Directions, 2022"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1251"
+    file_name: "RBI_Card_Tokenisation_Direction_2022.pdf"
+
+  - name: "Framework for Regulatory Sandbox"
+    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1141"
+    file_name: "RBI_Regulatory_Sandbox_Framework.pdf"
