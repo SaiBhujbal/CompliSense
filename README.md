@@ -173,8 +173,7 @@ CompliSense/
 1. **Docker**: Ensure you have Docker and Docker Compose installed on your system.  
 2. **API Keys**: You will need API keys from:  
 - **[Groq](https://groq.com/)** (free tier available)  
-- **[Tavily](https://tavily.com/)** (free tier available)  
-- ~~**[OpenAI](https://openai.com/)**~~ **No longer required!** We now use free HuggingFace embeddings that run locally.  
+- **[Tavily](https://tavily.com/)** (free tier available)   
   
 ### Configuration  
 1. **Clone this repository.**  
