@@ -60,7 +60,7 @@ cp .env.example .env
 # Add your API keys to .env
 GROQ_API_KEY=your_groq_key
 TAVILY_API_KEY=your_tavily_key
-OPENAI_API_KEY=your_openai_key
+# Note: OpenAI API key is no longer required - we use free HuggingFace embeddings
 ```
 
 ### 2. Local Development (without Docker)
@@ -305,11 +305,12 @@ def test_rbig_agent(mock_get_llm):
 # Required
 GROQ_API_KEY=xxx           # Groq API for LLM
 TAVILY_API_KEY=xxx         # Tavily for web search
-OPENAI_API_KEY=xxx         # OpenAI for embeddings
 
 # Optional
 RBI_DATA_PATH=./data       # Path for RBI documents
 CHROMA_DB_PATH=./chroma_db # Vector store location
+
+# Note: OpenAI API key is no longer required - we use free HuggingFace embeddings (all-MiniLM-L6-v2)
 ```
 
 ### Model Configuration

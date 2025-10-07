@@ -1,7 +1,7 @@
 import os
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -28,6 +28,11 @@ def setup_vector_store() -> Chroma:
         )
     
     print(f"Loading existing vector store from {db_path}")
-    embeddings = OpenAIEmbeddings()
+    # Use HuggingFace embeddings (free, no API key required)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': True}
+    )
     vector_store = Chroma(persist_directory=db_path, embedding_function=embeddings)
     return vector_store

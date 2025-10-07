@@ -7,7 +7,7 @@ from pathlib import Path
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 
 # --- Configuration ---
@@ -86,7 +86,12 @@ def create_vector_store():
     documents = text_splitter.split_documents(all_docs)
     
     print("Creating embeddings and building vector store... This may take a while.")
-    embeddings = OpenAIEmbeddings()
+    # Use HuggingFace embeddings (free, no API key required)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': True}
+    )
     
     # If the vector store already exists, Chroma will add to it. To ensure a clean build,
     # we remove the old directory first.

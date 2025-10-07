@@ -61,9 +61,10 @@ streamlit run src/ui/app.py                 # Run application
 ```bash
 GROQ_API_KEY=xxx              # Required: Groq LLM
 TAVILY_API_KEY=xxx            # Required: Web search
-OPENAI_API_KEY=xxx            # Required: Embeddings
 RBI_DATA_PATH=./data          # Optional: Data directory
 CHROMA_DB_PATH=./chroma_db    # Optional: Vector DB path
+
+# Note: OpenAI API key is no longer required - we use free HuggingFace embeddings
 ```
 
 ### Key Config Values (src/config.py)

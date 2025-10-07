@@ -10,6 +10,7 @@ langchain-chroma==0.1.4
 pypdf==5.1.0
 beautifulsoup4==4.12.3
 requests==2.32.3
+sentence-transformers==3.0.1
 
 # LLMs and Tools
 tavily-python==0.4.0
