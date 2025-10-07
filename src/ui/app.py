@@ -1,4 +1,5 @@
 import streamlit as st
+import uuid
 from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 
@@ -21,9 +22,9 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "graph" not in st.session_state:
     # Initialize the LangGraph workflow
-    # Using a thread_id for memory
+    # Using a unique thread_id for each session
     st.session_state.graph = create_workflow()
-    st.session_state.thread_id = "session_1"
+    st.session_state.thread_id = str(uuid.uuid4())
 
 # --- Display Chat History ---
 for message in st.session_state.messages:
@@ -58,15 +59,33 @@ if prompt := st.chat_input("Ask me anything about starting a FinTech business in
             if final_state.get("is_ambiguous"):
                 full_response = final_state.get("clarification_question", "I'm sorry, I need more information.")
             else:
-                # Otherwise, get the final response
-                full_response = final_state.get("final_response", "I'm sorry, I couldn't process that request.")
+                # Check if validation failed after max retries
+                retry_count = final_state.get("retry_count", 0)
+                if retry_count > 2 and final_state.get("validation_status") == "invalid":
+                    full_response = (
+                        "I apologize, but I'm having difficulty generating a fully validated response. "
+                        "Here's what I found:\n\n"
+                        f"**Validation Issue**: {final_state.get('validation_reason', 'Unknown issue')}\n\n"
+                        "Please try rephrasing your question or being more specific about your requirements."
+                    )
+                else:
+                    # Otherwise, get the final response
+                    full_response = final_state.get("final_response", "I'm sorry, I couldn't process that request.")
             
             message_placeholder.markdown(full_response)
 
         except Exception as e:
-            error_message = f"An error occurred: {e}. Please check your API keys and data directory."
+            import traceback
+            error_details = traceback.format_exc()
+            error_message = (
+                f"An error occurred while processing your request. "
+                f"Please check your API keys and try again.\n\n"
+                f"**Error**: {str(e)}"
+            )
             st.error(error_message)
-            full_response = error_message
+            # Log full error for debugging (only visible in console)
+            print(f"Error details:\n{error_details}")
+            full_response = "I encountered an error. Please try again or contact support if the issue persists."
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})

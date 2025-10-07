@@ -41,7 +41,7 @@ def validator_node(state: dict) -> dict:
     human_prompt = f"""
     RBI Compliance Report:
     ---
-    {state.get('rbig_compliance_report', 'Not generated.')}
+    {state.get('rbi_compliance_report', 'Not generated.')}
     ---
     
     PESTEL Report:
@@ -68,12 +68,18 @@ def validator_node(state: dict) -> dict:
     
     try:
         content = json.loads(response.content)
+        is_valid = content.get("is_valid", False)
+        current_retry = state.get("retry_count", 0)
+        
         return {
-            "validation_status": "valid" if content.get("is_valid", False) else "invalid",
-            "validation_reason": content.get("reason", "No reason provided.")
+            "validation_status": "valid" if is_valid else "invalid",
+            "validation_reason": content.get("reason", "No reason provided."),
+            "retry_count": current_retry + 1 if not is_valid else current_retry
         }
     except json.JSONDecodeError:
+        current_retry = state.get("retry_count", 0)
         return {
             "validation_status": "invalid",
-            "validation_reason": "Validator agent failed to produce a valid JSON response. Re-running agents."
+            "validation_reason": "Validator agent failed to produce a valid JSON response. Re-running agents.",
+            "retry_count": current_retry + 1
         }

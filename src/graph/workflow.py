@@ -23,7 +23,11 @@ def route_after_orchestration(state: AgentState) -> Literal["clarify", "parallel
         return "parallel_agents"
 
 def route_after_validation(state: AgentState) -> Literal["parallel_agents", "analysis"]:
-    if state.get("validation_status") == "invalid":
+    # Check retry count to prevent infinite loops
+    max_retries = 2
+    retry_count = state.get("retry_count", 0)
+    
+    if state.get("validation_status") == "invalid" and retry_count <= max_retries:
         return "parallel_agents" # Loop back for re-run
     else:
         return "analysis"
