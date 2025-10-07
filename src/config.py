@@ -48,7 +48,7 @@ COMPETITOR_DOMAINS = [
 # API Keys (loaded from environment)
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Note: OpenAI API key is no longer required - we use HuggingFace embeddings instead
 
 # Data Paths
 RBI_DATA_PATH = os.getenv("RBI_DATA_PATH", "./data")
@@ -62,9 +62,8 @@ def validate_config():
     if not GROQ_API_KEY:
         errors.append("GROQ_API_KEY is not set")
     if not TAVILY_API_KEY:
-        errors.append("TAVILY_API_KEY is not set")  
-    if not OPENAI_API_KEY:
-        errors.append("OPENAI_API_KEY is not set")
+        errors.append("TAVILY_API_KEY is not set")
+    # OpenAI API key is no longer required - we use free HuggingFace embeddings
     
     if errors:
         raise ValueError(

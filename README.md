@@ -28,9 +28,12 @@ graph TD
     end
 
     subgraph "External APIs"
-        G["OpenAI API<br>(Embeddings)"]
         H["Tavily API<br>(Live Search)"]
         I["Groq API<br>(LLM Reasoning)"]
+    end
+    
+    subgraph "Local Models"
+        G["HuggingFace<br>(Embeddings - Free)"]
     end
 
     User --> D;
@@ -38,6 +41,7 @@ graph TD
     A --> H;
     E --> I;
     E --> H;
+    E --> G;
     
     C -- Persists Data --> F;
     E -- Reads Data --> F;
@@ -132,7 +136,7 @@ stateDiagram-v2
 - **LLM**: Groq (for fast inference)  
 - **Vector Store**: ChromaDB  
 - **Data Source**: Tavily Search API  
-- **Embeddings**: OpenAI  
+- **Embeddings**: HuggingFace Sentence Transformers (free, runs locally)  
 - **Frontend**: Streamlit  
 - **Deployment**: Docker, Docker Compose  
 
@@ -168,9 +172,9 @@ CompliSense/
 ### Prerequisites
 1. **Docker**: Ensure you have Docker and Docker Compose installed on your system.  
 2. **API Keys**: You will need API keys from:  
-- **[Groq](https://groq.com/)**  
-- **[Tavily](https://tavily.com/)**  
-- **[OpenAI](https://openai.com/)** (for embeddings)  
+- **[Groq](https://groq.com/)** (free tier available)  
+- **[Tavily](https://tavily.com/)** (free tier available)  
+- ~~**[OpenAI](https://openai.com/)**~~ **No longer required!** We now use free HuggingFace embeddings that run locally.  
   
 ### Configuration  
 1. **Clone this repository.**  
