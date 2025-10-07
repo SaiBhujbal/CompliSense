@@ -1,31 +1,53 @@
-# RBI Document Sources for Compli-Sense
-# To update the knowledge base, modify the URLs or add new entries here and run `python ingest_data.py`
+# RBI Document Sources for CompliSense (with verified 2025 links where found)
 
 documents:
-  - name: "Master Direction - Non-Banking Financial Company – Peer to Peer Lending Platform (Reserve Bank) Directions, 2017"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1124"
-    file_name: "RBI_P2P_Master_Direction_2017.pdf"
+  # Digital Lending — 2025
+  - name: "Reserve Bank of India (Digital Lending) Directions, 2025"
+    url: "https://rbi.org.in/Scripts/NotificationUser.aspx?Id=12848&Mode=0"
+    file_name: "RBI_Digital_Lending_Directions_2025.pdf"
+    alt_pdf: "https://www.pdicai.org/Docs/RBI-2025-26-36_125202512145948.pdf"
 
-  - name: "Master Direction – NBFC-Factors (Reserve Bank) Directions, 2022"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1232"
-    file_name: "RBI_NBFc_Factors_Direction_2022.pdf"
+  # Priority Sector Lending — 2025
+  - name: "Master Directions – Priority Sector Lending (Targets & Classification) Directions, 2025"
+    url: "https://www.rbi.org.in/Scripts/BS_ViewMasDirections.aspx?id=12799"
+    file_name: "RBI_PSL_Master_Directions_2025.pdf"
+    alt_pdf: "https://www.fidcindia.org.in/wp-content/uploads/2025/03/RBI-PSL-MASTER-DIRECTIONS-24-03-25.pdf"
 
-  - name: "Master Direction – Non-Banking Financial Company – Systemically Important (Reserve Bank) Directions, 2023"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1275"
-    file_name: "RBI_NBFC_SI_Direction_2023.pdf"
+  # FAQs for Priority Sector Lending 2025
+  - name: "FAQs – Priority Sector Lending 2025"
+    url: "https://www.rbi.org.in/commonman/Upload/English/FAQs/PDFs/FAQPSLEN08052025.pdf"
+    file_name: "RBI_PSL_FAQ_2025.pdf"
 
-  - name: "Master Direction – Digital Lending (Reserve Bank) Directions, 2022"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1249"
-    file_name: "RBI_Digital_Lending_Direction_2022.pdf"
+  # Draft Co-Lending Arrangements (2025, draft)
+  - name: "Reserve Bank of India (Co-Lending Arrangements) Directions, 2025 (Draft)"
+    url: "https://www.fidcindia.org.in/wp-content/uploads/2025/04/RBI-DRAFT-DIRECTIONS-CO-LENDING-ARRANGEMENTS-APRIL-2025.pdf"
+    file_name: "RBI_CoLending_Directions_2025_draft.pdf"
 
-  - name: "Master Direction – Issuance and Operation of Pre-paid Payment Instruments (PPIs) (Reserve Bank) Directions, 2022"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1247"
-    file_name: "RBI_PPI_Master_Direction_2022.pdf"
+  # Other master circulars / updated directives
+  - name: "Core Investment Companies – Revised Master Circular (May 2025)"
+    url: "https://www.pdicai.org/Docs/RBI-2025-26-16_242025171053372.pdf"
+    file_name: "RBI_CIC_Master_Circular_2025.pdf"
 
-  - name: "Master Direction – Card Tokenisation (Reserve Bank) Directions, 2022"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1251"
-    file_name: "RBI_Card_Tokenisation_Direction_2022.pdf"
+  - name: "Housing Finance – Revised Master Circular (as of March 31, 2025)"
+    url: "https://www.pdicai.org/Docs/RBI-2025-26-16_242025171053372.pdf"
+    file_name: "RBI_Housing_Finance_Master_Circular_2025.pdf"
 
-  - name: "Framework for Regulatory Sandbox"
-    url: "https://www.rbi.org.in/scripts/BS_ViewBS.aspx?Id=1141"
-    file_name: "RBI_Regulatory_Sandbox_Framework.pdf"
+  - name: "Reserve Bank of India (Project Finance) Directions, 2025"
+    url: "https://avantiscdnprodstorage.blob.core.windows.net/legalupdatedocs/43700/Reserve-Bank-of-India-Project-Finance-Directions-2025-June192025.pdf"
+    file_name: "RBI_Project_Finance_Directions_2025.pdf"
+    alt_pdf: "https://www.fidcindia.org.in/wp-content/uploads/2019/06/RBI-PROJECT-FINANCE-DIRECTIONS-19-06-25.pdf"
+
+  - name: "Master Direction – Interest Rate on Deposits, 2025"
+    url: "https://www.rbi.org.in/commonman/Upload/English/FAQs/PDFs/FAQIRD01042025.pdf"
+    file_name: "RBI_Interest_Rate_on_Deposits_Directions_2025.pdf"
+    note: "This is the FAQs PDF; full master direction PDF to be confirmed"
+
+  - name: "Master Direction – Non-Banking Financial Companies Acceptance of Public Deposits (Updated as on February 27, 2025)"
+    url: "https://www.rbi.org.in/commonman/English/scripts/notification.aspx?id=1852"
+    file_name: "RBI_NBFC_Acceptance_of_Public_Deposits_Updated2025.pdf"
+    note: "The 2016 direction is maintained but annotated as updated to 2025"
+
+  - name: "Master Direction – Lending to MSME Sector (Updated as on July 23, 2025)"
+    url: "https://rbi.org.in/commonman/English/scripts/notification.aspx?id=2327"
+    file_name: "RBI_Lending_to_MSME_Master_Direction_Updated2025.pdf"
+    note: "Official RBI notice found; full PDF version to be fetched if available"
