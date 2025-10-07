@@ -39,4 +39,4 @@ def rbig_node(state: dict) -> dict:
     messages = [SystemMessage(content=system_prompt), HumanMessage(content=human_prompt)]
     response = llm.invoke(messages)
     
-    return {"rbig_compliance_report": response.content}
+    return {"rbi_compliance_report": response.content}

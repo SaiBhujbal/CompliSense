@@ -26,7 +26,7 @@ def analysis_node(state: dict) -> dict:
     human_prompt = f"""
     RBI Compliance Report:
     ---
-    {state.get('rbig_compliance_report', 'Not available.')}
+    {state.get('rbi_compliance_report', 'Not available.')}
     ---
     
     PESTEL Report:

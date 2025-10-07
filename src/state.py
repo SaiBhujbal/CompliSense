@@ -21,6 +21,7 @@ class AgentState(TypedDict):
     # Validator output
     validation_status: str # 'valid', 'invalid'
     validation_reason: str
+    retry_count: int  # Track validation retry attempts
     
     # Analysis and Final outputs
     final_analysis: str
