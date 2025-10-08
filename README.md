@@ -225,6 +225,9 @@ To stop the application and remove all associated containers and data (useful fo
 ```bash
 docker-compose down --volumes
 ```
-   
+Delete images to save storage, run: 
+```bash
+docker system prune -a --volumes
+```
   
 
