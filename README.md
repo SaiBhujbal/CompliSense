@@ -29,7 +29,7 @@ graph TD
 
     subgraph "External APIs"
         H["Tavily API<br>(Live Search)"]
-        I["Groq API<br>(LLM Reasoning)"]
+        I["Gemini API<br>(LLM Reasoning)"]
     end
     
     subgraph "Local Models"
@@ -133,7 +133,7 @@ stateDiagram-v2
 
 ## 🛠️ Technologies Used
 - **Backend**: Python, LangChain, LangGraph  
-- **LLM**: Groq (for fast inference)  
+- **LLM**: Gemini (for fast inference)  
 - **Vector Store**: ChromaDB  
 - **Data Source**: Tavily Search API  
 - **Embeddings**: HuggingFace Sentence Transformers (free, runs locally)  
@@ -172,7 +172,7 @@ CompliSense/
 ### Prerequisites
 1. **Docker**: Ensure you have Docker and Docker Compose installed on your system.  
 2. **API Keys**: You will need API keys from:  
-- **[Groq](https://groq.com/)** (free tier available)  
+- **[Gemini](https://aistudio.google.com/api-keys)** (free tier available)  
 - **[Tavily](https://tavily.com/)** (free tier available)   
   
 ### Configuration  
@@ -191,7 +191,8 @@ CompliSense/
 4. **Open the `.env` file and fill in your API keys.**
 
 ```
-GROQ_API_KEY=your_groq_api_key_here
+GOOGLE_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL="gemini-2.5-pro"
 TAVILY_API_KEY=your_tavily_api_key_here
 ```
 
