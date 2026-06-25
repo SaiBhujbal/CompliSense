@@ -57,7 +57,8 @@ class GeminiRESTChat:
             except urllib.error.HTTPError as e:
                 last = f"HTTP {e.code}"
                 if e.code in (429, 500, 503):
-                    time.sleep(3 * (attempt + 1)); continue
+                    # 429 = rate limit (free tier RPM); back off harder.
+                    time.sleep(min((6 if e.code == 429 else 3) * (attempt + 1), 40)); continue
                 break
             except Exception as ex:  # noqa: BLE001
                 last = f"{type(ex).__name__}: {ex}"

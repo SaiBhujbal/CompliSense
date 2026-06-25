@@ -13,6 +13,7 @@ import re
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, Field
 
+from .. import config
 from ..llm import get_llm
 from ..llm.structured import invoke_structured
 
@@ -53,14 +54,17 @@ def faithfulness_node(state: dict) -> dict:
         for a, t in reports.items()
     )
     # The DETERMINISTIC citation-resolution check above is the primary, always-on
-    # grounding signal. The LLM grounding judge is best-effort: if it can't run
-    # (transient API error / parse failure) we fall back to GROUNDED (rely on the
-    # deterministic check) rather than poisoning the answer with a false "unverified".
-    verdict = invoke_structured(
-        llm, FaithfulnessVerdict,
-        [SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=payload or "No reports to verify.")],
-        fallback=FaithfulnessVerdict(grounded=True),
-    )
+    # grounding signal. The LLM grounding judge is an OPTIONAL extra (off by default
+    # for rate-limit friendliness); when run, it's best-effort and falls back to
+    # GROUNDED on any failure so a transient API error never poisons the answer.
+    if config.FAITHFULNESS_LLM_CHECK:
+        verdict = invoke_structured(
+            llm, FaithfulnessVerdict,
+            [SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=payload or "No reports to verify.")],
+            fallback=FaithfulnessVerdict(grounded=True),
+        )
+    else:
+        verdict = FaithfulnessVerdict(grounded=True)
 
     invalid = bool(dangling) or not verdict.grounded
     failing = next(iter(dangling), "") or verdict.worst_agent

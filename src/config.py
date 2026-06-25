@@ -143,6 +143,10 @@ COMPETITOR_DOMAINS = ["tracxn.com", "crunchbase.com", "yourstory.com", "inc42.co
 # --------------------------------------------------------------------------- #
 # How many times the failing agent may be re-run before we ship with a warning.
 MAX_FAITHFULNESS_RETRIES = int(os.getenv("MAX_FAITHFULNESS_RETRIES", "1"))
+# Whether to run the (extra LLM call) grounding judge on top of the deterministic
+# citation-resolution check. Off by default: saves an LLM call/query (rate-limit
+# friendly) and the deterministic [S#]->source check is the reliable signal.
+FAITHFULNESS_LLM_CHECK = os.getenv("FAITHFULNESS_LLM_CHECK", "false").lower() == "true"
 
 
 # --------------------------------------------------------------------------- #
