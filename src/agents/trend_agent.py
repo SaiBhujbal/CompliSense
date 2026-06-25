@@ -1,42 +1,40 @@
-import os
-from tavily import TavilyClient
+"""Trend agent — single-pass, one fresh search, date-pinned.
+
+Time-sensitive: graph/iterative over-retrieval HURTS freshness, so this is a
+single shallow search + one structured pass. Predictions must be grounded in the
+retrieved results and cite [S#]; the current year is pinned to avoid stale framing.
+"""
+
+from datetime import date
+
 from langchain_core.messages import HumanMessage, SystemMessage
-from . import get_llm
+
+from ..llm import get_llm
+from ..tools import tavily_search
+
+SYSTEM_PROMPT = """You are a FinTech trend analyst. Based ONLY on the provided, dated search results:
+1. Current trends: the most significant developments happening now.
+2. Near-term outlook (next 1-2 years), grounded in the evidence — label clearly as projection.
+3. Statistical signals (growth rates, adoption) IF present in the results.
+4. Relevance to the user's goal.
+Cite every claim with its [S#] tag. Do NOT make unsupported predictions; if evidence is thin, say so."""
+
 
 def trend_node(state: dict) -> dict:
-    """
-    Predicts trends in the FinTech sector based on the user's query.
-    """
-    llm = get_llm()
-    tavily_api_key = os.getenv("TAVILY_API_KEY")
-    if not tavily_api_key:
-        return {"trend_report": "TAVILY_API_KEY not configured. Cannot perform trend prediction."}
-    
-    tavily = TavilyClient(api_key=tavily_api_key)
-    
-    search_query = f"latest trends and future predictions for FinTech in India {state['analysis_intent']}"
-    
-    try:
-        search_result = tavily.search(query=search_query, search_depth="advanced", include_raw_content=True, max_results=5)
-        context = "\n".join([obj.get("raw_content", obj["content"]) for obj in search_result["results"]])
-    except Exception as e:
-        return {"trend_report": f"Failed to fetch data using Tavily: {e}"}
+    if not state.get("route_flags", {}).get("trend"):
+        return {}
 
-    system_prompt = """
-    You are a futurist and data scientist specializing in financial technology.
-    Based on the provided search results, identify and predict key trends in the Indian FinTech sector relevant to the user's interest.
-    
-    Your report should:
-    1.  **Identify Current Trends**: What are the most significant developments happening right now?
-    2.  **Predict Future Trends**: Based on current data, what is likely to happen in the next 1-2 years?
-    3.  **Provide Statistical Insights**: If any data points (e.g., market growth rates, user adoption) are mentioned, highlight them.
-    4.  **Connect to User's Goal**: Relate these trends back to the user's query. For example, "This trend towards [X] could be a significant opportunity for your P2P lending platform because..."
-    
-    Base your predictions strictly on the provided data. Avoid making unsubstantiated claims.
-    """
-    
-    human_prompt = f"User's area of interest: {state['analysis_intent']}\n\nSearch Results:\n---\n{context}\n---\n\nGenerate the trend prediction report."
-    messages = [SystemMessage(content=system_prompt), HumanMessage(content=human_prompt)]
-    response = llm.invoke(messages)
-    
-    return {"trend_report": response.content}
+    intent = state.get("analysis_intent") or state["user_query"]
+    year = date.today().year
+    try:
+        context, sources = tavily_search(f"Indian FinTech trends {year} outlook {intent}")
+    except Exception as e:  # noqa: BLE001
+        return {"trend_report": f"Trend web search unavailable: {e}", "sources": {"trend": []}}
+
+    llm = get_llm("reasoning")
+    human = (
+        f"User's interest: {intent}\nToday's year: {year}\n\n"
+        f"Search results:\n---\n{context}\n---\n\nWrite the trend report, citing [S#] tags."
+    )
+    resp = llm.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=human)])
+    return {"trend_report": resp.content, "sources": {"trend": sources}}

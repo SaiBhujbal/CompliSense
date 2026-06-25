@@ -1,54 +1,36 @@
+"""Synthesis agent — cross-agent strategic analysis, citations preserved."""
+
 from langchain_core.messages import HumanMessage, SystemMessage
-from . import get_llm
+
+from ..llm import get_llm
+
+SYSTEM_PROMPT = """You are a strategy consultant for Indian FinTech. Synthesize the provided reports
+(some of: RBI compliance, PESTEL, competitor, trend) into one coherent analysis:
+1. Connect the dots across regulation, market, and trends.
+2. Opportunities.
+3. Risks (regulatory risks first).
+4. 2-3 concrete next steps.
+5. If the query is risk- or readiness-oriented, also emit a REGULATORY-RISK REGISTER as a table:
+   Risk | Likelihood (H/M/L) | Regulatory source [S#] | Mitigation — regulatory risks first, each row [S#]-cited.
+PRESERVE the [S#] citation tags from the source reports when you reuse their claims. Do not invent new facts."""
+
 
 def analysis_node(state: dict) -> dict:
-    """
-    Synthesizes all validated reports into a single strategic analysis.
-    """
-    llm = get_llm()
-    
-    system_prompt = """
-    You are a top-tier strategic consultant for the FinTech industry. You have been given four detailed reports: RBI Compliance, PESTEL, Competitor, and Trend.
-    
-    Your task is to synthesize these disparate pieces of information into a single, cohesive, and insightful strategic analysis for the user.
-    
-    The user's original query and intent is: "{user_query}" and "{analysis_intent}".
-    
-    Your analysis must:
-    1.  **Connect the Dots**: Show how regulatory changes (RBI) might affect competitors, or how economic trends (PESTEL) create new opportunities/threats.
-    2.  **Identify Opportunities**: Based on the synthesis, what are the most promising opportunities for the user?
-    3.  **Identify Risks**: What are the most significant risks and challenges the user should be aware of?
-    4.  **Provide Actionable Recommendations**: Suggest 2-3 concrete, strategic next steps the user should take.
-    
-    Write in a professional, analytical, and clear tone. This is an internal strategic document.
-    """
-    
-    human_prompt = f"""
-    RBI Compliance Report:
-    ---
-    {state.get('rbi_compliance_report', 'Not available.')}
-    ---
-    
-    PESTEL Report:
-    ---
-    {state.get('pestel_report', 'Not available.')}
-    ---
-    
-    Competitor Report:
-    ---
-    {state.get('competitor_report', 'Not available.')}
-    ---
-    
-    Trend Report:
-    ---
-    {state.get('trend_report', 'Not available.')}
-    ---
-    
-    Generate the final strategic analysis.
-    """
-    
-    formatted_prompt = system_prompt.format(user_query=state['user_query'], analysis_intent=state['analysis_intent'])
-    messages = [SystemMessage(content=formatted_prompt), HumanMessage(content=human_prompt)]
-    response = llm.invoke(messages)
-    
-    return {"final_analysis": response.content}
+    llm = get_llm("reasoning")
+    intent = state.get("analysis_intent") or state["user_query"]
+    parts = []
+    for agent, label in [("rbi", "RBI Compliance"), ("pestel", "PESTEL"),
+                         ("competitor", "Competitor"), ("trend", "Trend")]:
+        report = state.get(f"{agent}_report")
+        if report:
+            parts.append(f"### {label} report:\n{report}")
+    body = "\n\n".join(parts) if parts else "No specialist reports were produced."
+
+    unsupported = state.get("unsupported_claims") or []
+    caveat = (
+        f"\n\nNOTE: the faithfulness check flagged these as unverified — do NOT rely on them: {unsupported}"
+        if unsupported else ""
+    )
+    human = f"User's goal: {intent}\n\n{body}{caveat}\n\nWrite the synthesized strategic analysis."
+    resp = llm.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=human)])
+    return {"final_analysis": resp.content}

@@ -1,93 +1,89 @@
+"""CompliSense LangGraph workflow.
+
+    orchestrator ──ambiguous/out-of-scope──> END (UI shows clarification)
+         │ proceed
+         ▼
+      dispatch ──parallel──> [rbi, pestel, competitor, trend]   (each no-ops if not routed)
+                                   │ fan-in
+                                   ▼
+                            faithfulness ──invalid & retries left──> re-run ONLY failing agent
+                                   │ valid / retries exhausted
+                                   ▼
+                              analysis ──> responder ──> END
+"""
+
 from typing import Literal
-from langgraph.graph import StateGraph, END
-from langgraph.constants import START
 
-from ..state import AgentState
-from ..agents import (
-    orchestrator_node,
-    rbig_node,
-    pestel_node,
-    competitor_node,
-    trend_node,
-    validator_node,
-    analysis_node,
-    response_node
-)
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import END, StateGraph
 
-# Define the routing logic functions
-def route_after_orchestration(state: AgentState) -> Literal["clarify", "parallel_agents"]:
-    if state.get("is_ambiguous", True):
-        return "clarify"
-    else:
-        return "parallel_agents"
+from .. import config
+from ..agents import (
+    analysis_node,
+    competitor_node,
+    faithfulness_node,
+    orchestrator_node,
+    pestel_node,
+    rbig_node,
+    response_node,
+    trend_node,
+)
+from ..state import AgentState
 
-def route_after_validation(state: AgentState) -> Literal["parallel_agents", "analysis"]:
-    # Check retry count to prevent infinite loops
-    max_retries = 2
-    retry_count = state.get("retry_count", 0)
-    
-    if state.get("validation_status") == "invalid" and retry_count <= max_retries:
-        return "parallel_agents" # Loop back for re-run
-    else:
-        return "analysis"
+_SPECIALISTS = ["rbi", "pestel", "competitor", "trend"]
 
-# Create the workflow graph
+
+def _dispatch(state: AgentState) -> dict:
+    """No-op fan-out point; agents self-gate on route_flags."""
+    return {}
+
+
+def route_after_orchestration(state: AgentState) -> Literal["end", "proceed"]:
+    if state.get("is_ambiguous", False) or not state.get("in_scope", True):
+        return "end"
+    return "proceed"
+
+
+def route_after_faithfulness(state: AgentState) -> str:
+    failing = state.get("failing_agent")
+    if (
+        state.get("faithfulness_status") == "invalid"
+        and state.get("retry_count", 0) <= config.MAX_FAITHFULNESS_RETRIES
+        and failing in _SPECIALISTS
+    ):
+        return failing  # re-run only the weak agent
+    return "analysis"
+
+
 def create_workflow():
-    workflow = StateGraph(AgentState)
-    
-    # Add all nodes
-    workflow.add_node("orchestrator", orchestrator_node)
-    workflow.add_node("rbig_agent", rbig_node)
-    workflow.add_node("pestel_agent", pestel_node)
-    workflow.add_node("competitor_agent", competitor_node)
-    workflow.add_node("trend_agent", trend_node)
-    workflow.add_node("validator", validator_node)
-    workflow.add_node("analysis", analysis_node)
-    workflow.add_node("responder", response_node)
-    
-    # Set the entry point
-    workflow.set_entry_point("orchestrator")
-    
-    # Add conditional edges from orchestrator
-    workflow.add_conditional_edges(
-        "orchestrator",
-        route_after_orchestration,
-        {
-            "clarify": END, # The UI will handle displaying the clarification
-            "parallel_agents": "rbig_agent" # Start the parallel chain
-        }
+    g = StateGraph(AgentState)
+
+    g.add_node("orchestrator", orchestrator_node)
+    g.add_node("dispatch", _dispatch)
+    g.add_node("rbi", rbig_node)
+    g.add_node("pestel", pestel_node)
+    g.add_node("competitor", competitor_node)
+    g.add_node("trend", trend_node)
+    g.add_node("faithfulness", faithfulness_node)
+    g.add_node("analysis", analysis_node)
+    g.add_node("responder", response_node)
+
+    g.set_entry_point("orchestrator")
+    g.add_conditional_edges(
+        "orchestrator", route_after_orchestration, {"end": END, "proceed": "dispatch"}
     )
-    
-    # Define the parallel execution flow
-    # After rbig_agent, we run the others in parallel. LangGraph handles this implicitly
-    # when a node has multiple outgoing edges to different nodes that don't depend on each other.
-    workflow.add_edge("rbig_agent", "pestel_agent")
-    workflow.add_edge("rbig_agent", "competitor_agent")
-    workflow.add_edge("rbig_agent", "trend_agent")
-    
-    # All parallel agents must complete before validation
-    workflow.add_edge("pestel_agent", "validator")
-    workflow.add_edge("competitor_agent", "validator")
-    workflow.add_edge("trend_agent", "validator")
-    
-    # Add conditional edges from validator
-    workflow.add_conditional_edges(
-        "validator",
-        route_after_validation,
-        {
-            "parallel_agents": "rbig_agent", # Re-run the parallel agents
-            "analysis": "analysis"
-        }
+
+    # Parallel fan-out / fan-in.
+    for agent in _SPECIALISTS:
+        g.add_edge("dispatch", agent)
+        g.add_edge(agent, "faithfulness")
+
+    g.add_conditional_edges(
+        "faithfulness",
+        route_after_faithfulness,
+        {**{a: a for a in _SPECIALISTS}, "analysis": "analysis"},
     )
-    
-    # Final linear steps
-    workflow.add_edge("analysis", "responder")
-    workflow.add_edge("responder", END)
-    
-    # Initialize memory to allow for state persistence across runs (optional but good practice)
-    memory = MemorySaver()
-    
-    # Compile the graph
-    app = workflow.compile(checkpointer=memory)
-    return app
+    g.add_edge("analysis", "responder")
+    g.add_edge("responder", END)
+
+    return g.compile(checkpointer=MemorySaver())

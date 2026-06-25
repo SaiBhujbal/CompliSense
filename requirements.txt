@@ -1,25 +1,31 @@
-# Core LangChain and LangGraph
-langchain==0.2.16
-langchain-groq==0.1.9
-langchain-community==0.2.16
-langgraph==0.2.16
-PyYAML==6.0.2
+# NOTE: floors, not hard pins — lock exact versions after a clean install/test.
+# The original code pinned a deprecated 2024-era stack; this targets current.
 
-# Vector Store and Document Loaders
-langchain-chroma==0.1.4
-pypdf==5.1.0
-beautifulsoup4==4.12.3
-requests==2.32.3
+# Core orchestration
+langchain-core>=0.3
+langchain>=0.3
+langgraph>=0.2.40
+langchain-community>=0.3
+PyYAML>=6.0
 
-# Embeddings (free, local)
-langchain-huggingface==0.1.0
-sentence-transformers==3.0.1
+# LLM providers — install only what LLM_PROVIDER needs.
+# openai-compatible path (ChatOpenAI) covers OpenRouter AND z.ai-direct (GLM-5.2).
+langchain-openai>=0.2
+# langchain-groq>=0.2
+# langchain-google-genai>=2.0
+# langchain-anthropic>=0.2
 
-# LLMs and Tools
-tavily-python==0.4.0
+# RAG: vector store, embeddings, cross-encoder reranker, BM25, splitting, PDFs
+langchain-chroma>=0.1.4
+langchain-huggingface>=0.1
+langchain-text-splitters>=0.3
+sentence-transformers>=3.0
+rank-bm25>=0.2.2
+pypdf>=5.0
 
-# UI
-streamlit==1.38.0
-
-# Environment and Utilities
-python-dotenv==1.0.1
+# Tools / UI / utilities
+tavily-python>=0.5
+streamlit>=1.38
+requests>=2.32
+python-dotenv>=1.0
+pydantic>=2.7
