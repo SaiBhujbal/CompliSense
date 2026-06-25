@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trends · CompliSense</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" /></head>
+<body data-page="trends">
+<header class="phead wrap">
+  <a class="backlink" href="index.html" data-link>← all agents</a>
+  <div class="eyebrow">Trend agent · thinking_level: low</div>
+  <h1 class="grad glow">Trends</h1>
+  <p>Signal over noise — current trajectory and the 12–18 month read, grounded in dated sources.</p>
+</header>
+
+<section class="wrap"><div class="metrics reveal">
+  <div class="metric card"><b data-count="2.4" data-pre="$" data-suf="B">0</b><span>FinTech funding, 2025</span></div>
+  <div class="metric card"><b data-count="3" data-pre="#">0</b><span>Globally by deal count</span></div>
+  <div class="metric card"><b data-count="78" data-suf="%">0</b><span>Early-stage surge YoY</span></div>
+  <div class="metric card"><b data-count="97" data-suf="">0</b><span>Adoption index, 2026E</span></div>
+</div></section>
+
+<section class="wrap"><div class="card reveal" style="height:360px"><canvas id="trend" role="img" aria-label="FinTech adoption trajectory 2021 to 2026"></canvas></div></section>
+
+<section class="wrap">
+  <div class="reveal"><div class="h2">Trajectory</div><p class="lead">What's happening now, and where it points.</p></div>
+  <div class="card reveal"><div class="tl">
+    <div class="ev"><b>Now · Account Aggregator goes mainstream</b><p>Consent-based data sharing unlocks faster, cheaper underwriting. <span class="src">[AA MD]</span></p></div>
+    <div class="ev"><b>Now · Regulator tightens lending conduct</b><p>DLG caps, direct disbursal and KFS transparency reshape unit economics. <span class="src">[Digital Lending 2025]</span></p></div>
+    <div class="ev"><b>12–18 mo · Co-lending scales</b><p>Bank-NBFC partnerships expand priority-sector and MSME credit. <span class="src">[Co-Lending 2025]</span></p></div>
+    <div class="ev"><b>12–18 mo · Embedded payments</b><p>PA-licensed FinTechs layer settlement revenue onto lending. <span class="src">[PA 2025]</span></p></div>
+  </div></div>
+</section>
+
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Projections are directional, grounded in dated sources.</p><div>CompliSense · trend agent</div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="engine.js"></script>
+<script>area('trend',['2021','2022','2023','2024','2025','2026E'],[34,52,61,70,84,97],'Adoption index');</script>
+</body></html>

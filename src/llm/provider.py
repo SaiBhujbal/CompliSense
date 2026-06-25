@@ -54,6 +54,7 @@ def get_llm(role: Role = "reasoning") -> BaseChatModel:
         return GeminiRESTChat(
             model=model, api_key=api_key,
             temperature=config.LLM_TEMPERATURE, max_tokens=config.LLM_MAX_TOKENS,
+            thinking_level=config.GEMINI_THINKING.get(role),
         )
 
     if provider == "openai":

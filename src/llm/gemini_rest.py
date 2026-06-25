@@ -22,11 +22,14 @@ _ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/{model}:generateCo
 
 
 class GeminiRESTChat:
-    def __init__(self, model: str, api_key: str, temperature: float = 0.1, max_tokens: int = 1024):
+    def __init__(self, model: str, api_key: str, temperature: float = 0.1,
+                 max_tokens: int = 1024, thinking_level: str | None = None):
         self.model = model if model.startswith("models/") else f"models/{model}"
         self.api_key = api_key
         self.temperature = temperature
         self.max_tokens = max_tokens
+        # thinkingLevel is a Gemini-3 feature; only send it for gemini-3.x models.
+        self.thinking_level = thinking_level if "gemini-3" in self.model else None
 
     def _to_prompt(self, messages) -> str:
         if isinstance(messages, str):
@@ -39,10 +42,12 @@ class GeminiRESTChat:
 
     def _call(self, text: str, retries: int = 7) -> str:
         url = _ENDPOINT.format(model=self.model, key=self.api_key)
-        body = json.dumps({
-            "contents": [{"parts": [{"text": text}]}],
-            "generationConfig": {"temperature": self.temperature, "maxOutputTokens": self.max_tokens},
-        }).encode()
+        gen_cfg = {"maxOutputTokens": self.max_tokens}
+        if "gemini-3" not in self.model:  # Gemini 3.x: temperature/top_p/top_k deprecated
+            gen_cfg["temperature"] = self.temperature
+        if self.thinking_level:
+            gen_cfg["thinkingConfig"] = {"thinkingLevel": self.thinking_level}
+        body = json.dumps({"contents": [{"parts": [{"text": text}]}], "generationConfig": gen_cfg}).encode()
         last = ""
         for attempt in range(retries):
             try:

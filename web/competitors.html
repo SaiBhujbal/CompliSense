@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Market · CompliSense</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" /></head>
+<body data-page="competitors">
+<header class="phead wrap">
+  <a class="backlink" href="index.html" data-link>← all agents</a>
+  <div class="eyebrow">Competitor agent · thinking_level: medium</div>
+  <h1 class="grad glow">Market</h1>
+  <p>Who's funded, how they're positioned — cards tilt to your cursor, the map plots the field.</p>
+</header>
+
+<section class="wrap"><div class="grid g3 tilt" id="cmps"></div></section>
+
+<section class="wrap"><div class="grid g2">
+  <div class="card reveal"><div class="h2" style="font-size:22px">Positioning</div><p class="lead" style="margin-bottom:16px">Compliance maturity × market reach.</p><div style="height:320px"><canvas id="map" role="img" aria-label="Competitor positioning scatter"></canvas></div></div>
+  <div class="card reveal"><div class="h2" style="font-size:22px">Funding raised</div><p class="lead" style="margin-bottom:16px">Total disclosed, US$ millions.</p><div style="height:320px"><canvas id="fund" role="img" aria-label="Funding by competitor"></canvas></div></div>
+</div></section>
+
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — competitor data from public sources, may be incomplete. Funding figures are cite-or-omit; verify before relying.</p><div>CompliSense · competitor agent</div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="engine.js"></script>
+<script>
+const C=[
+ {n:'LenDenClub',tag:'P2P',f:'$10M',st:'Series B',x:6,y:7,c:'#3df0ff',r:11},
+ {n:'KreditBee',tag:'Digital lending',f:'$700M',st:'Series D',x:8.5,y:6.5,c:'#8b7bff',r:16},
+ {n:'Cred',tag:'Payments',f:'$806M',st:'Late',x:9,y:7.5,c:'#ff5db1',r:17},
+ {n:'You',tag:'CompliSense',f:'—',st:'Series B',x:5,y:8.5,c:'#39e6a8',r:13},
+];
+document.getElementById('cmps').innerHTML=C.map(c=>`<div class="card t3 reveal"><div style="display:flex;justify-content:space-between"><span class="tag" style="color:${c.c};border-color:${c.c}">${c.tag}</span></div><h3 style="font-size:20px;margin:14px 0 4px">${c.n}</h3><div style="display:flex;gap:20px;margin-top:14px"><div><span style="color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.1em">Funding</span><br><b style="font-family:'Space Grotesk';font-size:20px">${c.f}</b></div><div><span style="color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.1em">Stage</span><br><b style="font-family:'Space Grotesk';font-size:20px">${c.st}</b></div></div></div>`).join('');
+scatter('map',C.map(c=>({n:c.n,x:c.x,y:c.y,c:c.c,r:c.r})));
+hbars('fund',['KreditBee','Cred','LenDenClub'],[700,806,10],['#8b7bff','#ff5db1','#3df0ff']);
+</script>
+</body></html>

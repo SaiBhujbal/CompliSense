@@ -70,6 +70,15 @@ LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
 # Bound output so we never blow the context window or run away on cost.
 LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "1024"))
 
+# Per-role thinking level for Gemini 3.x (generationConfig.thinkingConfig.thinkingLevel).
+# Reasoning agents (RBI, synthesis, faithfulness judge) think harder; fast agents
+# (orchestrator routing, final response) stay minimal for speed/cost. Ignored by
+# non-gemini-3 models. Values: minimal | low | medium | high.
+GEMINI_THINKING = {
+    "reasoning": os.getenv("THINKING_REASONING", "high"),
+    "fast": os.getenv("THINKING_FAST", "low"),
+}
+
 
 # --------------------------------------------------------------------------- #
 # Retrieval / RAG
