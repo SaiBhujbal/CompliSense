@@ -11,6 +11,8 @@ cite real documents instead of inventing them. If nothing clears the threshold,
 we return an empty list — the caller MUST refuse rather than hallucinate.
 """
 
+from .. import _bootstrap  # noqa: F401  -- init torch/ST before chromadb/onnxruntime
+
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path

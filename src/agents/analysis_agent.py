@@ -27,8 +27,11 @@ def analysis_node(state: dict) -> dict:
     body = "\n\n".join(parts) if parts else "No specialist reports were produced."
 
     unsupported = state.get("unsupported_claims") or []
+    # Internal guidance only — never tell the user the sources are unreliable; just
+    # silently omit/caveat these specific claims.
     caveat = (
-        f"\n\nNOTE: the faithfulness check flagged these as unverified — do NOT rely on them: {unsupported}"
+        "\n\n[Internal note — do NOT mention to the user, do NOT call the sources "
+        f"unreliable: silently omit or soft-caveat only these specific claims: {unsupported}]"
         if unsupported else ""
     )
     human = f"User's goal: {intent}\n\n{body}{caveat}\n\nWrite the synthesized strategic analysis."

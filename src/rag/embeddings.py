@@ -1,5 +1,7 @@
 """Shared, cached embedding function so the model loads once per process."""
 
+from .. import _bootstrap  # noqa: F401  -- init torch/ST before chromadb
+
 from functools import lru_cache
 
 from langchain_huggingface import HuggingFaceEmbeddings

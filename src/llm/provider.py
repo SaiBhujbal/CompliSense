@@ -48,14 +48,12 @@ def get_llm(role: Role = "reasoning") -> BaseChatModel:
         return ChatGroq(api_key=api_key, **common)
 
     if provider == "google":
-        from langchain_google_genai import ChatGoogleGenerativeAI
+        # Raw REST (see gemini_rest): avoids langchain-google-genai protobuf clash.
+        from .gemini_rest import GeminiRESTChat
 
-        # langchain-google-genai uses max_output_tokens
-        return ChatGoogleGenerativeAI(
-            google_api_key=api_key,
-            max_output_tokens=config.LLM_MAX_TOKENS,
-            model=model,
-            temperature=config.LLM_TEMPERATURE,
+        return GeminiRESTChat(
+            model=model, api_key=api_key,
+            temperature=config.LLM_TEMPERATURE, max_tokens=config.LLM_MAX_TOKENS,
         )
 
     if provider == "openai":

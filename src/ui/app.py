@@ -4,6 +4,8 @@ Shows the final response (which already carries a forced disclaimer), surfaces
 the source citations behind each answer, and flags any faithfulness warnings.
 """
 
+import src._bootstrap  # noqa: F401  -- init torch/ST before chromadb (must be first)
+
 import uuid
 
 import streamlit as st
