@@ -23,10 +23,13 @@ It is built around one conviction: *a generic chatbot will confidently make thin
 - [Grounding pipelines](#grounding-pipelines)
 - [Tech stack](#tech-stack)
 - [Run it](#run-it)
+- [Security (Docker image)](#security-docker-image)
 - [Repository layout](#repository-layout)
 - [Implementation status & roadmap](#implementation-status--roadmap)
+- [License](#license)
 
 ---
+
 
 ## What it does
 
@@ -52,66 +55,88 @@ The whole product hydrates to **your company**: enter your details once, and Gap
 
 ## Architecture (C4)
 
-The [C4 model](https://c4model.com) describes software at four zoom levels: **Context → Container → Component → Code.** The diagrams below render natively on GitHub (Mermaid).
-
 ### Level 1 — System context
 
 *Who uses CompliSense, and which external systems it depends on.*
 
 ```mermaid
-C4Context
-  title System Context — CompliSense
-  Person(founder, "Founder / Analyst", "Asks business, market & compliance questions for their sector")
+flowchart TB
+  founder["Founder / Analyst"]
+  cs["CompliSense<br/>Multi-agent evidence-graded platform"]
 
-  System(cs, "CompliSense", "Multi-agent, evidence-graded intelligence platform")
+  rbi["RBI feeds<br/>Official circular and press-release RSS"]
+  news["Google News RSS<br/>Competitor / sector news, source-tiered"]
+  reviews["Public review sources<br/>App stores, G2, Trustpilot, retail"]
+  tavily["Tavily<br/>Grounded web search"]
+  llm["LLM providers<br/>OpenRouter/GLM, Gemini, Groq fallback chain"]
+  slack["Slack<br/>Incoming webhook opt-in"]
 
-  System_Ext(rbi, "RBI feeds", "Official circular & press-release RSS")
-  System_Ext(news, "Google News RSS", "Competitor / sector news, source-tiered")
-  System_Ext(reviews, "Public review sources", "App stores, G2, Trustpilot, retail (licensed/CSV)")
-  System_Ext(tavily, "Tavily", "Grounded web search")
-  System_Ext(llm, "LLM providers", "OpenRouter/GLM · Gemini · Groq (fallback chain)")
-  System_Ext(slack, "Slack", "Incoming webhook (opt-in)")
+  founder -->|"Asks questions, reads cited answers HTTPS/SSE"| cs
+  cs -->|"Polls circulars HTTPS"| rbi
+  cs -->|"Fetches tiered news HTTPS"| news
+  cs -->|"Ingests reviews CSV / API"| reviews
+  cs -->|"Grounded search HTTPS"| tavily
+  cs -->|"Reasoning and routing HTTPS"| llm
+  cs -->|"Delivers signals Webhook"| slack
 
-  Rel(founder, cs, "Asks questions, reads cited answers", "HTTPS/SSE")
-  Rel(cs, rbi, "Polls circulars", "HTTPS")
-  Rel(cs, news, "Fetches tiered news", "HTTPS")
-  Rel(cs, reviews, "Ingests reviews", "CSV / API")
-  Rel(cs, tavily, "Grounded search", "HTTPS")
-  Rel(cs, llm, "Reasoning + routing", "HTTPS")
-  Rel(cs, slack, "Delivers signals", "Webhook")
+  classDef person fill:#08427b,stroke:#073b6f,color:#fff
+  classDef system fill:#1168bd,stroke:#0b4884,color:#fff
+  classDef ext fill:#999999,stroke:#8a8a8a,color:#fff
+  class founder person
+  class cs system
+  class rbi,news,reviews,tavily,llm,slack ext
 ```
 
 ### Level 2 — Containers
 
-*The deployable/runtime units and how they communicate. The key architectural decision is the **process split**: the web tier is pure-stdlib and loads no ML libraries, so a single query spawns an isolated runner for the heavy stack.*
+*The deployable/runtime units and how they communicate. The key architectural decision is the **process split**: the web tier is pure-stdlib and loads no ML libraries, so a single query spawns an isolated runner for the heavy stack. Under Docker Compose, that stack lives in one **app** image (port 8000 only); named volumes persist data and the HuggingFace cache; an optional **ingest** profile shares those volumes.*
 
 ```mermaid
-C4Container
-  title Containers — CompliSense
-  Person(user, "Founder / Analyst", "")
+flowchart TB
+  user["Founder / Analyst"]
 
-  System_Boundary(cs, "CompliSense") {
-    Container(spa, "Web UI", "Vanilla JS / HTML / CSS", "Onboarding, lenses, Gap Finder, Watchtower, provenance rendering")
-    Container(web, "Web server", "FastAPI + Uvicorn (SSE)", "Static host + pure-stdlib APIs; spawns the runner per query")
-    Container(runner, "Agent runner", "Python subprocess", "Runs one query through the LangGraph workflow, streams JSON events")
-    ContainerDb(chroma, "Vector store", "ChromaDB", "RBI corpus: bge-large dense + BM25")
-    Container(pipes, "Grounding pipelines", "Pure stdlib", "Watchtower · daily brief · newsfeed · reviews ingest")
-    Container(slackmod, "Slack module", "Pure stdlib", "Block Kit builders + opt-in webhook post")
-  }
+  subgraph docker["Docker Compose"]
+    direction TB
+    subgraph appimg["app container FastAPI image port 8000"]
+      direction TB
+      spa["Web UI<br/>Vanilla JS / HTML / CSS"]
+      web["Web server<br/>FastAPI + Uvicorn SSE"]
+      runner["Agent runner<br/>Python subprocess"]
+      chroma[("Vector store<br/>ChromaDB PersistentClient")]
+      pipes["Grounding pipelines<br/>Pure stdlib"]
+      slackmod["Slack module<br/>Pure stdlib"]
+    end
+    ingest["ingest optional<br/>Compose profile"]
+    vdata[("compli-sense-data<br/>Docker volume")]
+    vhf[("compli-sense-hf-cache<br/>Docker volume")]
+  end
 
-  System_Ext(llm, "LLM providers", "OpenRouter/Gemini/Groq")
-  System_Ext(feeds, "External feeds", "RBI · News · Reviews · Tavily")
-  System_Ext(slack, "Slack", "")
+  llm["LLM providers<br/>OpenRouter / Gemini / Groq"]
+  feeds["External feeds<br/>RBI / News / Reviews / Tavily"]
+  slack["Slack<br/>Incoming webhook opt-in"]
 
-  Rel(user, spa, "Uses", "HTTPS")
-  Rel(spa, web, "Fetch + EventSource", "HTTP/SSE")
-  Rel(web, runner, "Spawns per query", "stdout JSON lines")
-  Rel(web, pipes, "In-process calls", "")
-  Rel(web, slackmod, "Preview / post", "")
-  Rel(runner, chroma, "Retrieval", "")
-  Rel(runner, llm, "Reasoning + routing", "HTTPS")
-  Rel(pipes, feeds, "Polls", "HTTPS")
-  Rel(slackmod, slack, "POST (opt-in)", "Webhook")
+  user -->|"Uses HTTPS port 8000"| spa
+  spa -->|"Fetch + EventSource HTTP/SSE"| web
+  web -->|"Spawns per query stdout JSON lines"| runner
+  web -->|"In-process calls"| pipes
+  web -->|"Preview / post"| slackmod
+  runner -->|"Retrieval in-process"| chroma
+  chroma -->|"Persists volume"| vdata
+  runner -->|"Reads models volume"| vhf
+  ingest -->|"Writes corpus volume"| vdata
+  ingest -->|"Downloads models volume"| vhf
+  runner -->|"Reasoning and routing HTTPS"| llm
+  pipes -->|"Polls HTTPS"| feeds
+  slackmod -->|"POST opt-in Webhook"| slack
+
+  classDef person fill:#08427b,stroke:#073b6f,color:#fff
+  classDef container fill:#1168bd,stroke:#0b4884,color:#fff
+  classDef db fill:#438dd5,stroke:#2e6295,color:#fff
+  classDef ext fill:#999999,stroke:#8a8a8a,color:#fff
+  class user person
+  class spa,web,runner,pipes,slackmod,ingest container
+  class chroma,vdata,vhf db
+  class llm,feeds,slack ext
 ```
 
 **Why the split?** `torch` + `chromadb` + `sentence-transformers` under uvicorn triggered a native OpenMP segfault on the target hardware. Rather than fight it, the web server stays lightweight and each `/api/stream` request runs the ML stack in a short-lived subprocess (`agent_runner.py`), forwarding its JSON events to the browser as Server-Sent Events. This also means a crashing run can never take down the server, and the trust-critical pipelines (`watchtower`, `dailybrief`, `newsfeed`, `reviews_ingest`, `slack_integration`) are **pure stdlib** and safe to import in-process.
@@ -230,11 +255,26 @@ Python · LangGraph · FastAPI + Uvicorn (SSE) · ChromaDB · HuggingFace embedd
 Prereqs: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine + Compose v2), and an LLM provider key in `.env`.
 
 ```bash
-cp .env.example .env          # add OPENROUTER_API_KEY (or other provider) + TAVILY_API_KEY
+cp .env.example .env          # fill keys (see below)
 docker compose up --build
 ```
 
-Open <http://localhost:8000>. Health: <http://localhost:8000/api/health>.
+| | URL |
+|---|---|
+| App | <http://localhost:8000> |
+| Health | <http://localhost:8000/api/health> |
+
+**`.env.example` keys** (copy to `.env`; never commit secrets):
+
+| Key | Required? | Purpose |
+|---|---|---|
+| `LLM_PROVIDER` | yes | `openrouter` · `groq` · `google` · `openai` · `anthropic` · `openai_compatible` |
+| `OPENROUTER_API_KEY` | if using OpenRouter | Primary LLM key (or the key for your chosen provider) |
+| `TAVILY_API_KEY` | recommended | Grounded web search (PESTEL / competitor / trend) |
+| `RBI_DATA_PATH` / `CHROMA_DB_PATH` | optional | Local defaults; Compose overrides to `/app/data` … |
+| `HF_HOME` | optional | Embedding/reranker cache; Compose uses a named volume |
+| `SLACK_*` | optional | Webhook / bot tokens — **prefer pasting in the UI** so nothing lands in git |
+| `CS_AUTO_INGEST` | optional | `true` builds Chroma on first boot (slow); default `false` |
 
 Optional RBI / compliance corpus (first time; downloads PDFs + embedding model — often 5–15+ min):
 
@@ -242,7 +282,7 @@ Optional RBI / compliance corpus (first time; downloads PDFs + embedding model �
 docker compose --profile ingest run --rm ingest
 ```
 
-Volumes persist Chroma under `compli-sense-data` and HuggingFace models under `compli-sense-hf-cache` so restarts stay fast.
+Volumes persist Chroma under `compli-sense-data` and HuggingFace models under `compli-sense-hf-cache` so restarts stay fast. Only port **8000** is published — no Chroma HTTP port.
 
 If `http://127.0.0.1:8000/api/health` 404s while Docker is “healthy”, a local `uvicorn` is probably still bound to `127.0.0.1:8000` — stop it so Compose owns the port.
 
@@ -274,6 +314,26 @@ uvicorn server:app --host 127.0.0.1 --port 8000
 ```
 
 Open <http://127.0.0.1:8000>.
+
+## Security (Docker image)
+
+Hardening as of **2026-07-15** (see `Dockerfile` comments for the same notes):
+
+| Hardened | Detail |
+|---|---|
+| Multi-stage image | Builder has `build-essential`; runtime is slim Bookworm + `libgomp1` only |
+| OS updates | `apt-get upgrade` on builder and runtime |
+| PyPI patches | `setuptools>=83`, `wheel>=0.46.2`, `jaraco.context>=6.1.0` (CVE-2026-59890, CVE-2026-24049, CVE-2026-23949) |
+| No `curl` in runtime | Healthcheck uses Python stdlib `urllib` |
+| Chroma local-only | `PersistentClient` in-process — **no** Chroma HTTP/FastAPI server, **no** Chroma port published |
+| Secrets | Slack tokens via UI (or `.env` locally); **do not commit** `.env` or tokens |
+| Ports | Publish only `8000`; do not expose unnecessary services |
+
+**Residual risk**
+
+- **chromadb CVE-2026-45829** (ChromaToast): no fixed PyPI release past **1.5.9** yet. CompliSense never runs `chroma run` / the collection HTTP API — the documented attack surface for that CVE — so risk is mitigated by architecture until upstream `>1.5.9`.
+- **Debian base**: scanner hits on Bookworm packages (perl/tar/glibc family and similar) may remain unfixed or disputed upstream; keep the base image updated and avoid shipping extra OS tools.
+- Treat API keys and Slack tokens as secrets; rotate if they ever land in git history.
 
 ## Repository layout
 
@@ -310,3 +370,7 @@ evals/                    NormBench + RMC evaluation harness
 - Per-company **generated** PESTEL/SWOT content (today PESTEL/SWOT show curated demo data; company-specific generation is the next lift and depends on live model quota).
 - Agent-level claim tagging (moving `FACT/INFERENCE/ESTIMATE` from a render-time heuristic into agent output).
 - RMC research → publishable paper (design + pilot results done; benchmark scale-up and a real compression baseline remain — see the research doc's honest self-assessment).
+
+## License
+
+Proprietary / All rights reserved unless a `LICENSE` file is present in this repository.

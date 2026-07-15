@@ -1,0 +1,48 @@
+{
+  "phaseA": {
+    "FULL": {
+      "recall": 1.0,
+      "mean_tokens": 5206,
+      "answered": 3,
+      "failed": 5
+    },
+    "GENERIC": {
+      "recall": 0.0,
+      "mean_tokens": 2997,
+      "answered": 1,
+      "failed": 7
+    },
+    "TIERED": {
+      "recall": 1.0,
+      "mean_tokens": 3298,
+      "answered": 1,
+      "failed": 7
+    },
+    "RMC": {
+      "recall": 1.0,
+      "mean_tokens": 3470,
+      "answered": 1,
+      "failed": 7
+    }
+  },
+  "phaseB": {
+    "FULL": {
+      "fresh": 0.0,
+      "stale": 0.0,
+      "n": 0,
+      "failed": 4
+    },
+    "GENERIC": {
+      "fresh": 0.0,
+      "stale": 0.5,
+      "n": 2,
+      "failed": 3
+    }
+  },
+  "budgets": {
+    "raw": 5200,
+    "RMC": 3234,
+    "GENERIC": 2989,
+    "TIERED": 2989
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "rbi-cc-001": {
+    "cc-26pct": {
+      "status": "grounded",
+      "source": "RBI_NBFC_Account_Aggregator_MD_2016.pdf",
+      "page": 16,
+      "matched": {
+        "26%": "26 per cent"
+      }
+    },
+    "cc-30pct": {
+      "status": "grounded",
+      "source": "RBI_NBFC_Account_Aggregator_MD_2016.pdf",
+      "page": 16,
+      "matched": {
+        "30%": "30 per cent"
+      }
+    }
+  },
+  "rbi-dl-001": {
+    "dl-cooloff": {
+      "status": "grounded",
+      "source": "RBI_Digital_Lending_Directions_2025.pdf",
+      "page": 0,
+      "matched": {
+        "cooling": "cooling"
+      }
+    }
+  },
+  "rbi-dl-002": {
+    "dl-dlg-cap": {
+      "status": "grounded",
+      "source": "RBI_Digital_Lending_Directions_2025.pdf",
+      "page": 21,
+      "matched": {
+        "5%": "5%"
+      }
+    }
+  },
+  "rbi-dl-003": {
+    "dl-data-localization": {
+      "status": "UNGROUNDED",
+      "facts": [
+        "server",
+        "india"
+      ]
+    }
+  },
+  "rbi-dl-004": {
+    "dl-kfs-apr": {
+      "status": "grounded",
+      "source": "RBI_Digital_Lending_Directions_2025.pdf",
+      "page": 3,
+      "matched": {
+        "apr": "apr"
+      }
+    },
+    "dl-apr-fees": {
+      "status": "grounded",
+      "source": "RBI_Digital_Lending_Directions_2025.pdf",
+      "page": 9,
+      "matched": {
+        "processing fee": "processing fee"
+      }
+    }
+  },
+  "rbi-dl-005": {
+    "dl-no-passthrough": {
+      "status": "grounded",
+      "source": "RBI_Digital_Lending_Directions_2025.pdf",
+      "page": 8,
+      "matched": {
+        "pass-through": "pass-through"
+      }
+    }
+  },
+  "rbi-p2p-001": {
+    "p2p-lender-cap": {
+      "status": "UNGROUNDED",
+      "facts": [
+        "50 lakh"
+      ]
+    },
+    "p2p-borrower-cap": {
+      "status": "UNGROUNDED",
+      "facts": [
+        "50,000"
+      ]
+    }
+  },
+  "rbi-p2p-002": {
+    "p2p-nof": {
+      "status": "grounded",
+      "source": "RBI_NBFC_Scale_Based_Regulation_2023.pdf",
+      "page": 18,
+      "matched": {
+        "2 crore": "2 crore"
+      }
+    }
+  },
+  "rbi-p2p-003": {
+    "p2p-no-guarantee": {
+      "status": "grounded",
+      "source": "RBI_Digital_Lending_Directions_2025.pdf",
+      "page": 15,
+      "matched": {
+        "guaranteed": "guaranteed"
+      }
+    }
+  },
+  "rbi-nof-001": {
+    "nof-10cr": {
+      "status": "grounded",
+      "source": "RBI_NBFC_Scale_Based_Regulation_2023.pdf",
+      "page": 18,
+      "matched": {
+        "10 crore": "10 crore"
+      }
+    },
+    "nof-2027": {
+      "status": "grounded",
+      "source": "RBI_NBFC_Scale_Based_Regulation_2023.pdf",
+      "page": 18,
+      "matched": {
+        "2027": "2027"
+      }
+    }
+  },
+  "rbi-colend-001": {
+    "colend-10pct": {
+      "status": "UNGROUNDED",
+      "facts": [
+        "10%"
+      ]
+    },
+    "colend-15days": {
+      "status": "UNGROUNDED",
+      "facts": [
+        "15",
+        "days"
+      ]
+    }
+  },
+  "rbi-colend-002": {
+    "colend-dlg": {
+      "status": "UNGROUNDED",
+      "facts": [
+        "5%"
+      ]
+    }
+  },
+  "rbi-oos-001": {
+    "status": "n/a (abstain item)"
+  },
+  "rbi-oos-002": {
+    "status": "n/a (abstain item)"
+  },
+  "rbi-psl-001": {
+    "psl-targets": {
+      "status": "unlabelled (expert label required)"
+    }
+  }
+}
