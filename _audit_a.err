@@ -1,4 +1,0 @@
-[llm fallback] role=fast primary failed: RuntimeError: Gemini REST call failed after 7 tries: HTTP 429; trying next provider in chain
-[llm fallback] role=fast primary failed: RuntimeError: Gemini REST call failed after 7 tries: HTTP 429; trying next provider in chain
-[llm fallback] role=reasoning primary failed: RuntimeError: Gemini REST call failed after 7 tries: HTTP 429; trying next provider in chain
-[llm fallback] role=reasoning primary failed: RuntimeError: Gemini REST call failed after 7 tries: HTTP 429; trying next provider in chain
