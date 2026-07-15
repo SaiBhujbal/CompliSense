@@ -149,11 +149,11 @@ flowchart TB
 flowchart TD
   O([Orchestrator<br/>scope-guard · intent · routing]) -->|in scope| D{dispatch<br/>fan-out}
   O -->|ambiguous / out-of-scope| END1([clarify → END])
-  D -.route_flags.-> R[RBI / Compliance<br/>RAG + citation]
-  D -.route_flags.-> P[PESTEL]
-  D -.route_flags.-> C[Competitor<br/>bounded ReAct]
-  D -.route_flags.-> T[Trend]
-  R --> F{Faithfulness gate<br/>deterministic [S#]→source}
+  D -.->|route_flags| R[RBI / Compliance<br/>RAG + citation]
+  D -.->|route_flags| P[PESTEL]
+  D -.->|route_flags| C[Competitor<br/>bounded ReAct]
+  D -.->|route_flags| T[Trend]
+  R --> F{"Faithfulness gate<br/>deterministic [S#]→source"}
   P --> F
   C --> F
   T --> F
