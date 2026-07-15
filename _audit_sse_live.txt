@@ -1,6 +1,0 @@
-: connected
-
-: ping
-
-: ping
-
