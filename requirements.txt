@@ -1,5 +1,15 @@
 # NOTE: floors, not hard pins — lock exact versions after a clean install/test.
-# The original code pinned a deprecated 2024-era stack; this targets current.
+
+# Security-patched build/install tooling (CVE-2026-59890 / 24049 / 23949)
+# Dockerfile also re-upgrades these after requirements in case transitive pins regress.
+setuptools>=83.0.0
+wheel>=0.46.2
+jaraco.context>=6.1.0
+
+# Web server (FastAPI SPA + SSE) — primary runtime, not Streamlit
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.7
 
 # Core orchestration
 langchain-core>=0.3
@@ -8,24 +18,29 @@ langgraph>=0.2.40
 langchain-community>=0.3
 PyYAML>=6.0
 
-# LLM providers — install only what LLM_PROVIDER needs.
-# openai-compatible path (ChatOpenAI) covers OpenRouter AND z.ai-direct (GLM-5.2).
+# LLM providers — openai-compatible path covers OpenRouter AND z.ai-direct
 langchain-openai>=0.2
-# langchain-groq>=0.2
-# langchain-google-genai>=2.0
-# langchain-anthropic>=0.2
 
 # RAG: vector store, embeddings, cross-encoder reranker, BM25, splitting, PDFs
+# torch MUST be installed (Docker installs CPU wheel first; local: pip install torch)
+torch>=2.2
 langchain-chroma>=0.1.4
+# CVE-2026-45829 (ChromaToast): no fixed PyPI release past 1.5.9 as of 2026-07-15.
+# Pin latest; CompliSense uses local PersistentClient only — do NOT run `chroma run`
+# / expose Chroma HTTP. Upstream fix merged (PR #7237) — bump when >1.5.9 ships.
+chromadb>=1.5.9
 langchain-huggingface>=0.1
 langchain-text-splitters>=0.3
 sentence-transformers>=3.0
+transformers>=4.40
+huggingface-hub>=0.23
 rank-bm25>=0.2.2
 pypdf>=5.0
 
-# Tools / UI / utilities
+# Tools / utilities
 tavily-python>=0.5
-streamlit>=1.38
 requests>=2.32
 python-dotenv>=1.0
-pydantic>=2.7
+
+# Slack inbound Ask AI (Socket Mode + chat.postMessage)
+slack-sdk>=3.27

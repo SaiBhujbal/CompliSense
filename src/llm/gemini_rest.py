@@ -42,17 +42,26 @@ class GeminiRESTChat:
 
     def _call(self, text: str, retries: int = 7) -> str:
         url = _ENDPOINT.format(model=self.model, key=self.api_key)
-        gen_cfg = {"maxOutputTokens": self.max_tokens}
+        out_tokens = self.max_tokens
+        if "gemini-3" in self.model:
+            # Gemini-3 THINKING tokens are billed against maxOutputTokens. With a
+            # tight budget the model spends it all reasoning and the visible answer
+            # gets truncated to a sentence. Give deep reports real room.
+            out_tokens = max(out_tokens, 8192)
+        gen_cfg = {"maxOutputTokens": out_tokens}
         if "gemini-3" not in self.model:  # Gemini 3.x: temperature/top_p/top_k deprecated
             gen_cfg["temperature"] = self.temperature
         if self.thinking_level:
             gen_cfg["thinkingConfig"] = {"thinkingLevel": self.thinking_level}
         body = json.dumps({"contents": [{"parts": [{"text": text}]}], "generationConfig": gen_cfg}).encode()
         last = ""
+        # Cap attempts so rate-limit burnout hands off to LLM_FALLBACK_PROVIDER
+        # instead of blocking Ask AI for minutes (7×~40s used to starve the chain).
+        rate_limit_attempts = 0
         for attempt in range(retries):
             try:
                 req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
-                with urllib.request.urlopen(req, timeout=90) as r:
+                with urllib.request.urlopen(req, timeout=180) as r:
                     d = json.load(r)
                 cands = d.get("candidates", [])
                 if not cands:
@@ -61,9 +70,16 @@ class GeminiRESTChat:
                 return "".join(p.get("text", "") for p in parts if isinstance(p, dict)).strip()
             except urllib.error.HTTPError as e:
                 last = f"HTTP {e.code}"
-                if e.code in (429, 500, 503):
-                    # 429 = rate limit (free tier RPM); back off harder.
-                    time.sleep(min((6 if e.code == 429 else 3) * (attempt + 1), 40)); continue
+                if e.code == 429:
+                    rate_limit_attempts += 1
+                    # Fail fast to provider fallback after 2 brief backoffs (~6s total).
+                    if rate_limit_attempts >= 3:
+                        break
+                    time.sleep(min(2 * rate_limit_attempts, 4))
+                    continue
+                if e.code in (500, 503):
+                    time.sleep(min(3 * (attempt + 1), 20))
+                    continue
                 break
             except Exception as ex:  # noqa: BLE001
                 last = f"{type(ex).__name__}: {ex}"

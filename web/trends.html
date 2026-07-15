@@ -3,39 +3,172 @@
 <title>Trends · CompliSense</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" /></head>
+<link rel="stylesheet" href="style.css?v=3" />
+<style>
+/* ---- horizon hero: signals flowing along time-lanes toward your read ---- */
+.hzcard{position:relative;background:radial-gradient(120% 120% at 50% 40%,#10141c 0%,#0a0d13 72%);border:1px solid var(--stroke);border-radius:var(--rl);padding:12px;overflow:hidden}
+.hz{position:relative;width:100%;aspect-ratio:16/8;min-height:380px}
+.hz svg{position:absolute;inset:0;width:100%;height:100%}
+.hz-lane{fill:none;stroke-width:1.5;stroke-dasharray:6 7;animation:hzflow 2.6s linear infinite;opacity:.45}
+@keyframes hzflow{to{stroke-dashoffset:-13}}
+.hz-grid{stroke:rgba(255,255,255,.06)}
+.hz-tlab{font-family:'Space Grotesk';font-size:10.5px;letter-spacing:.18em;fill:#5f6b7a}
+.hz-llab{font-family:'Space Grotesk';font-size:10px;letter-spacing:.16em;fill:#6b7686}
+.hz-ev{cursor:pointer}
+.hz-ev circle.g{opacity:.16;transition:.25s}
+.hz-ev:hover circle.g{opacity:.4}
+.hz-ev text.et{font-family:'Space Grotesk';font-size:11px;fill:var(--text)}
+.hz-ev text.ed{font-size:9px;fill:#78828f}
+.hz-ev .pnow{animation:blippulse2 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blippulse2{0%{opacity:.8;transform:scale(.5)}100%{opacity:0;transform:scale(3)}}
+.hz-you{font-family:'Space Grotesk';font-size:10.5px;letter-spacing:.14em;fill:var(--teal)}
+.hz-hint{position:absolute;left:0;right:0;bottom:10px;text-align:center;color:var(--faint);font-size:11.5px;pointer-events:none}
+</style></head>
 <body data-page="trends">
 <header class="phead wrap">
   <a class="backlink" href="index.html" data-link>← all agents</a>
-  <div class="eyebrow">Trend agent · thinking_level: low</div>
+  <div class="eyebrow">Trend agent · thinking_level: high</div>
   <h1 class="grad glow">Trends</h1>
-  <p>Signal over noise — current trajectory and the 12–18 month read, grounded in dated sources.</p>
+  <p>Where the money is going, what's growing fastest, how it's being built, and what the next 12–18 months hold — grounded in dated sources.</p>
 </header>
 
-<section class="wrap"><div class="metrics reveal">
-  <div class="metric card"><b data-count="2.4" data-pre="$" data-suf="B">0</b><span>FinTech funding, 2025</span></div>
-  <div class="metric card"><b data-count="3" data-pre="#">0</b><span>Globally by deal count</span></div>
-  <div class="metric card"><b data-count="78" data-suf="%">0</b><span>Early-stage surge YoY</span></div>
-  <div class="metric card"><b data-count="97" data-suf="">0</b><span>Adoption index, 2026E</span></div>
-</div></section>
-
-<section class="wrap"><div class="card reveal" style="height:360px"><canvas id="trend" role="img" aria-label="FinTech adoption trajectory 2021 to 2026"></canvas></div></section>
-
-<section class="wrap">
-  <div class="reveal"><div class="h2">Trajectory</div><p class="lead">What's happening now, and where it points.</p></div>
-  <div class="card reveal"><div class="tl">
-    <div class="ev"><b>Now · Account Aggregator goes mainstream</b><p>Consent-based data sharing unlocks faster, cheaper underwriting. <span class="src">[AA MD]</span></p></div>
-    <div class="ev"><b>Now · Regulator tightens lending conduct</b><p>DLG caps, direct disbursal and KFS transparency reshape unit economics. <span class="src">[Digital Lending 2025]</span></p></div>
-    <div class="ev"><b>12–18 mo · Co-lending scales</b><p>Bank-NBFC partnerships expand priority-sector and MSME credit. <span class="src">[Co-Lending 2025]</span></p></div>
-    <div class="ev"><b>12–18 mo · Embedded payments</b><p>PA-licensed FinTechs layer settlement revenue onto lending. <span class="src">[PA 2025]</span></p></div>
-  </div></div>
+<section class="wrap" style="padding-top:12px">
+  <div class="hzcard reveal">
+    <div class="hz"><svg id="hz" viewBox="0 0 900 430"></svg></div>
+    <div class="hz-hint">signals flow toward your 12–18 month read · tap a signal to ask the AI what it means for you</div>
+  </div>
 </section>
 
-<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Projections are directional, grounded in dated sources.</p><div>CompliSense · trend agent</div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<section class="wrap"><div class="metrics reveal">
+  <div class="metric card"><b data-count="51.3" data-pre="$" data-suf="B">0</b><span>India FinTech market, 2026</span><div class="src" style="margin-top:6px">[Mordor 2026]</div></div>
+  <div class="metric card"><b data-count="13" data-suf="B+">0</b><span>UPI transactions / month</span><div class="src" style="margin-top:6px">[NPCI · Mar 2026]</div></div>
+  <div class="metric card"><b data-count="514" data-pre="$" data-suf="B">0</b><span>Digital lending by 2030</span><div class="src" style="margin-top:6px">[Citi Ventures]</div></div>
+  <div class="metric card"><b data-count="31.5" data-suf="%">0</b><span>Digital-lending CAGR</span><div class="src" style="margin-top:6px">[Grand View]</div></div>
+</div></section>
+
+<!-- WHERE -->
+<section class="wrap">
+  <div class="reveal"><div class="h2">Where the money is going</div><p class="lead">India digital-lending market, US$ billions. Solid = reported; dashed = forecast to 2030.</p></div>
+  <div class="grid g2">
+    <div class="card reveal"><div style="height:300px"><canvas id="size" role="img" aria-label="Digital lending market size to 2030"></canvas></div>
+      <p style="color:var(--faint);font-size:12px;margin-top:10px">$38.2B (2021) → ~$514.6B (2030) — a ~13× decade. Digital lending rises from ~51% to 60%+ of the FinTech opportunity. <span class="src">[Citi Ventures · Inc42]</span></p></div>
+    <div class="card reveal"><div class="h2" style="font-size:18px">What it means for you</div>
+      <div class="tl" style="margin-top:14px">
+        <div class="ev"><b>The pool is still expanding fast</b><p>A 31.5% CAGR means the question is share capture, not market creation. <span class="src">[Grand View]</span></p></div>
+        <div class="ev"><b>Lending out-grows payments</b><p>Payments lead today (~43% share) but lending compounds faster — the value is migrating to credit. <span class="src">[Mordor]</span></p></div>
+        <div class="ev"><b>Capital is selective, not scarce</b><p>KreditBee's $280M Series E at a $1.5B valuation (Apr 2026) shows late-stage money flows to profitable, compliant books. <span class="src">[YourStory · Tracxn]</span></p></div>
+      </div></div>
+  </div>
+</section>
+
+<!-- WHAT -->
+<section class="wrap">
+  <div class="reveal"><div class="h2">What's growing fastest</div><p class="lead">Annual growth rate by segment — where the curve is steepest.</p></div>
+  <div class="grid g2">
+    <div class="card reveal"><div style="height:280px"><canvas id="cagr" role="img" aria-label="CAGR by FinTech segment"></canvas></div></div>
+    <div class="card reveal"><div class="h2" style="font-size:18px">Read the leaders</div>
+      <div class="fbar" style="--c:var(--teal)"><div class="ft"><b>Digital lending</b><span class="v">31.5%</span></div><div class="track"><div class="fill" data-v="100"></div></div><p>Fastest large segment; AA + AI underwriting unlock thin-file credit. <span class="src">[Grand View]</span></p></div>
+      <div class="fbar" style="--c:var(--indigo)"><div class="ft"><b>Neobanking</b><span class="v">19.6%</span></div><div class="track"><div class="fill" data-v="62"></div></div><p>Fastest-growing model overall, on embedded finance + partner-bank rails. <span class="src">[Mordor]</span></p></div>
+      <div class="fbar" style="--c:var(--amber)"><div class="ft"><b>FinTech (overall)</b><span class="v">16.3%</span></div><div class="track"><div class="fill" data-v="52"></div></div><p>The whole market still compounds in the mid-teens. <span class="src">[Mordor]</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="wrap">
+  <div class="reveal"><div class="h2">How it's being built — the drivers</div><p class="lead">The forces actually moving the curve, each with the "so what" for an operator.</p></div>
+  <div class="grid g3" id="drivers"></div>
+</section>
+
+<!-- WHAT WILL BE -->
+<section class="wrap">
+  <div class="reveal"><div class="h2">What will be — the 12–18 month read</div><p class="lead">Dated, near-term shifts you can plan against — not vibes.</p></div>
+  <div class="grid g2">
+    <div class="card reveal"><div class="tl">
+      <div class="ev"><b>Now · Co-lending economics reset</b><p>The Co-Lending Directions (in force Jan 2026) extend co-lending to all lending and add minimum-retention rules — changing originator capital economics. <span class="src">[Co-Lending 2026]</span></p></div>
+      <div class="ev"><b>Now · BNPL formalised</b><p>RBI's late-2025 BNPL guidance treats it as regulated lending; >₹50,000 cr outstanding now sits under oversight. <span class="src">[RBI BNPL 2025]</span></p></div>
+      <div class="ev"><b>6–12 mo · AA-native underwriting becomes default</b><p>GST, UPI and supply-chain flows feed credit decisions; underwriting compresses from ~3 days to ~3 hours. <span class="src">[KPMG · AA MD]</span></p></div>
+      <div class="ev"><b>12–18 mo · Public-market test</b><p>KreditBee's pre-IPO round signals the first wave of digital-lending IPOs — a valuation reset for the category. <span class="src">[Fintech News SG]</span></p></div>
+    </div></div>
+    <div class="card reveal">
+      <div class="h2" style="font-size:18px">Digital lending to 2030 — scenarios</div>
+      <p class="lead" style="margin-bottom:14px">US$ bn, illustrative band around the Citi base case.</p>
+      <div style="height:230px"><canvas id="scen" role="img" aria-label="Digital lending scenarios to 2030"></canvas></div>
+      <p style="color:var(--faint);font-size:12px;margin-top:10px">Bull assumes faster AA + co-lending adoption; bear assumes tighter capital and slower rule-clarity. <span class="src">[Citi base · CompliSense scenarios]</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="reveal"><div class="h2" style="font-size:20px">Sources</div></div>
+  <div class="card reveal" style="font-size:12.5px;line-height:1.9">
+    <a href="https://www.mordorintelligence.com/industry-reports/india-fintech-market" target="_blank" rel="noopener" class="src">Mordor Intelligence — India FinTech Market</a> ·
+    <a href="https://www.citi.com/ventures/perspectives/opinion/fintech-in-india.html" target="_blank" rel="noopener" class="src">Citi Ventures — FinTech in India</a> ·
+    <a href="https://www.grandviewresearch.com/horizon/outlook/digital-lending-platform-market/india" target="_blank" rel="noopener" class="src">Grand View — Digital Lending Platform</a> ·
+    <a href="https://inc42.com/buzz/digital-lending-become-1-3-tn-market-2030-india/" target="_blank" rel="noopener" class="src">Inc42 — Digital lending to 2030</a> ·
+    <a href="https://kpmg.com/in/en/insights/2025/10/indias-fintech-evolution-from-growth-to-resilience.html" target="_blank" rel="noopener" class="src">KPMG — India FinTech evolution</a> ·
+    <a href="https://yourstory.com/2026/04/funding-kreditbee-280-million-15-billion-valuation" target="_blank" rel="noopener" class="src">YourStory — KreditBee Series E</a>
+  </div>
+</section>
+
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Figures are from third-party market reports (ranges vary by methodology); scenarios are illustrative. Verify against the cited primary source.</p><div>CompliSense · trend agent</div></div></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="engine.js"></script>
-<script>area('trend',['2021','2022','2023','2024','2025','2026E'],[34,52,61,70,84,97],'Adoption index');</script>
+<script src="engine.js?v=3"></script>
+<script>
+/* WHERE — market size to 2030 (US$ bn), dashed forecast from 2026 */
+projection('size',['2021','2023','2025','2026','2028','2030'],[38,120,280,360,470,515],3);
+/* WHAT — CAGR by segment */
+hbars('cagr',['Digital lending','Neobanking','FinTech overall'],[31.5,19.6,16.3],['#4cc3b6','#8089e8','#d9a34e']);
+/* WHAT WILL BE — scenarios to 2030 */
+scenarios('scen',['2026','2028','2030'],{Bull:[360,520,650],Base:[360,470,515],Bear:[360,420,380]},{Bull:'#57c98a',Base:'#4cc3b6',Bear:'#e0697f'});
+
+/* HOW — driver cards */
+const D=[
+ ['Account Aggregator','#4cc3b6','Consent-based data sharing','Borrowers share 12 months of bank/GST/UPI data via AA — underwriting drops from ~3 days to ~3 hours and fraud falls.','So what: lower CAC + cleaner risk; build AA flows into the core.','[KPMG · AA MD]'],
+ ['UPI rails','#8089e8','13B+ transactions / month','UPI is the cheapest distribution surface on earth — ₹25+ lakh cr moved monthly in early 2026.','So what: near-zero-cost reach; design UPI-native onboarding.','[NPCI 2026]'],
+ ['Co-lending capital','#d9a34e','Banks fund, FinTechs originate','Jan-2026 Directions extend co-lending to all lending + add minimum-retention rules.','So what: scale off-balance-sheet, but re-model the retained economics.','[Co-Lending 2026]'],
+ ['AI underwriting','#7bbf8f','Thin-file credit scoring','Alternative-data models score new-to-credit borrowers incumbents can’t.','So what: serve the underserved — but keep models explainable for RBI.','[Sector]'],
+ ['BNPL, now regulated','#e0c451','>₹50,000 cr outstanding','RBI’s late-2025 guidance treats BNPL as lending — a higher compliance floor.','So what: the easy-growth era ends; compliance becomes the moat.','[RBI BNPL 2025]'],
+ ['Neobanking','#5aa0ef','Fastest model, 19.6% CAGR','Embedded finance + partner-bank (BaaS) models grow quickest of all segments.','So what: distribution-as-a-service is the wedge; own the consent layer.','[Mordor]'],
+];
+document.getElementById('drivers').innerHTML=D.map(d=>`<div class="card reveal" style="border-top:2px solid ${d[1]}"><b style="color:${d[1]};font-family:'Space Grotesk'">${d[0]}</b><div style="font-family:'Space Grotesk';font-size:18px;margin:6px 0">${d[2]}</div><p style="color:var(--muted);font-size:13px;line-height:1.5">${d[3]}</p><p style="color:var(--text);font-size:12.5px;margin-top:8px;line-height:1.5">${d[4]}</p><div class="src" style="margin-top:8px">${d[5]}</div></div>`).join('');
+
+/* ================= HORIZON HERO ================= */
+(function horizon(){
+  const svg=document.getElementById('hz');if(!svg)return;
+  const W=900,H=430,X0=90,X1=790,LANES=[110,215,320];
+  const tx=t=>X0+(X1-X0)*t/18;   // t in months 0..18
+  const EV=[
+    {lane:2,t:0,c:'#e0697f',now:1,l:'Co-lending 10% retention live',d:'in force Jan 2026',q:'How does the co-lending 10% retention change my economics?'},
+    {lane:2,t:1.5,c:'#d9a34e',l:'BNPL fully under oversight',d:'RBI guidance 2025',q:'What does BNPL regulation mean for checkout credit?'},
+    {lane:2,t:16,c:'#d9a34e',l:'PA net-worth ₹25 cr due',d:'by Mar 2028',q:'How do I plan for the PA net-worth glide path?'},
+    {lane:0,t:2,c:'#8089e8',now:1,l:'Selective funding — CM2 gate',d:'unit economics era',q:'What must my unit economics look like to raise now?'},
+    {lane:0,t:12,c:'#7bbf8f',l:'Digital-lending IPO window',d:'KreditBee pre-IPO signal',q:'What does the digital-lending IPO wave mean for my valuation?'},
+    {lane:1,t:6,c:'#4cc3b6',l:'AA-native underwriting default',d:'3 days → 3 hours',q:'How do I use Account Aggregator underwriting?'},
+    {lane:1,t:12,c:'#5aa0ef',l:'Checkout credit lifts AOV',d:'BNPL/EMI mainstream',q:'Should I offer EMI at checkout, and what compliance applies?'},
+  ];
+  const LNAMES=['CAPITAL','PAYMENTS & DATA','RULES'],LC=['#8089e8','#4cc3b6','#e0697f'];
+  let out=[];
+  [0,6,12,18].forEach(m=>{out.push(`<line class="hz-grid" x1="${tx(m)}" y1="70" x2="${tx(m)}" y2="${H-60}"/>`);
+    out.push(`<text class="hz-tlab" x="${tx(m)}" y="52" text-anchor="middle">${m===0?'NOW':'+'+m+'M'}</text>`);});
+  LANES.forEach((y,i)=>{
+    out.push(`<text class="hz-llab" x="${X0-14}" y="${y+3}" text-anchor="end">${LNAMES[i]}</text>`);
+    out.push(`<line class="hz-lane" x1="${X0}" y1="${y}" x2="${X1+40}" y2="${y}" stroke="${LC[i]}"/>`);});
+  // the destination: your read
+  out.push(`<g transform="translate(${X1+52},${LANES[1]})">
+    <circle r="34" fill="rgba(76,195,182,.07)" stroke="var(--teal)" stroke-width="1.5"/>
+    <text class="hz-you" text-anchor="middle" dy="-4">YOUR</text>
+    <text class="hz-you" text-anchor="middle" dy="10">READ</text></g>`);
+  EV.forEach((e,i)=>{const x=tx(e.t),y=LANES[e.lane];const above=i%2===0;
+    out.push(`<g class="hz-ev" transform="translate(${x},${y})" onclick="location.href='agents.html?q='+encodeURIComponent('${e.q.replace(/'/g,"\\'")}')">
+      ${e.now?`<circle class="pnow" r="7" fill="none" stroke="${e.c}" stroke-width="1.5"/>`:''}
+      <circle class="g" r="16" fill="${e.c}"/><circle r="5.5" fill="${e.c}"/>
+      <text class="et" x="0" y="${above?-30:36}" text-anchor="middle">${e.l}</text>
+      <text class="ed" x="0" y="${above?-17:49}" text-anchor="middle">${e.d}</text>
+    </g>`);});
+  svg.innerHTML=out.join('');
+})();
+</script>
 </body></html>

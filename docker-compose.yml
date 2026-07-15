@@ -1,32 +1,73 @@
-version: '3.8'
+# CompliSense — FastAPI SPA on :8000 (agent_runner subprocess for ML isolation)
+#
+# Quick start:
+#   cp .env.example .env   # add API keys
+#   docker compose up --build
+#   open http://localhost:8000
+#
+# Optional RBI corpus (first time, ~5–15 min + embedding download):
+#   docker compose --profile ingest run --rm ingest
 
-# Define a named volume that Docker will manage
+name: complisense
+
 volumes:
   compli-sense-data:
+  compli-sense-hf-cache:
 
 services:
   app:
     build: .
     ports:
-      - "8501:8501"
-    volumes:
-      - ./.env:/app/.env:ro
-      # Mount the Docker-managed volume to the data path inside the container
-      - compli-sense-data:/app/data
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
     environment:
-      - RBI_DATA_PATH=/app/data
-      - CHROMA_DB_PATH=/app/data/chroma_db # Store chroma_db inside the data volume
-    command: ["streamlit", "run", "src/ui/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
-    profiles: ["app"]
+      RBI_DATA_PATH: /app/data
+      CHROMA_DB_PATH: /app/data/chroma_db
+      HF_HOME: /app/.cache/huggingface
+      TRANSFORMERS_CACHE: /app/.cache/huggingface
+      SENTENCE_TRANSFORMERS_HOME: /app/.cache/huggingface
+      KMP_DUPLICATE_LIB_OK: "TRUE"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      # Set CS_AUTO_INGEST=true to build Chroma on first boot (slow).
+      CS_AUTO_INGEST: ${CS_AUTO_INGEST:-false}
+    volumes:
+      - compli-sense-data:/app/data
+      - compli-sense-hf-cache:/app/.cache/huggingface
+    healthcheck:
+      # Python stdlib — image has no curl (reduces OS CVE surface)
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4)",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    restart: unless-stopped
 
-  ingestor:
+  # One-shot: download RBI PDFs + build Chroma (shares volumes with app)
+  ingest:
     build: .
-    volumes:
-      - ./.env:/app/.env:ro
-      # The ingestor also uses the same volume to create the data
-      - compli-sense-data:/app/data
-    environment:
-      - RBI_DATA_PATH=/app/data
-      - CHROMA_DB_PATH=/app/data/chroma_db
-    command: ["python", "ingest_data.py"]
     profiles: ["ingest"]
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      RBI_DATA_PATH: /app/data
+      CHROMA_DB_PATH: /app/data/chroma_db
+      HF_HOME: /app/.cache/huggingface
+      TRANSFORMERS_CACHE: /app/.cache/huggingface
+      SENTENCE_TRANSFORMERS_HOME: /app/.cache/huggingface
+      KMP_DUPLICATE_LIB_OK: "TRUE"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    volumes:
+      - compli-sense-data:/app/data
+      - compli-sense-hf-cache:/app/.cache/huggingface
+    entrypoint: ["python", "ingest_data.py"]

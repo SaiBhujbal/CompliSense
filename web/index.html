@@ -2,52 +2,62 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CompliSense — RBI compliance & FinTech strategy, visualized</title>
+<title>CompliSense — grounded competitive, market &amp; compliance intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body data-page="index">
 <header class="phead wrap">
-  <div class="eyebrow reveal" style="opacity:1">Agentic intelligence · Reserve Bank of India</div>
-  <h1>RBI compliance &amp; FinTech<br><span class="grad glow">strategy, visualized.</span></h1>
-  <p>Ask once. Get a board-ready answer — grounded in RBI directions, rendered as living visuals across six specialist agents. No walls of text.</p>
-  <div class="ask"><input id="q" placeholder="e.g. New investor takes 28% of my NBFC — do I need RBI approval?" /><button class="btn" onclick="ask()">Analyze</button></div>
+  <div class="eyebrow reveal" style="opacity:1">Agentic business intelligence · any sector</div>
+  <h1>Competitor gaps, market forces &amp;<br><span class="grad glow">compliance — graded by evidence.</span></h1>
+  <p>Ask about any business, in any sector. Get a board-ready answer where every claim is <b>sourced, estimated, or flagged unverified</b> — never made up. Switch the lens; open a deep page to go further.</p>
+  <div class="ask"><input id="q" placeholder="e.g. Where is my opening against my biggest competitor?" /><button class="btn" onclick="heroAsk()">Analyze</button></div>
   <div class="chips">
-    <span class="chip" onclick="fill(this)">Payment aggregator licence &amp; net worth</span>
-    <span class="chip" onclick="fill(this)">KYC obligations for onboarding</span>
-    <span class="chip" onclick="fill(this)">Digital lending cooling-off &amp; DLG</span>
+    <span class="chip" onclick="heroChip(this)">Find the gap vs a competitor</span>
+    <span class="chip" onclick="heroChip(this)">PESTEL forces on my margins</span>
+    <span class="chip" onclick="heroChip(this)">RBI licence &amp; net worth (fintech)</span>
   </div>
 </header>
 
 <section class="wrap">
   <div class="metrics reveal">
-    <div class="metric card"><b data-count="6" data-pre="">0</b><span>Specialist agents</span></div>
-    <div class="metric card"><b data-count="100" data-suf="%">0</b><span>Claims source-cited</span></div>
+    <div class="metric card"><b data-count="6" data-pre="">0</b><span>Switchable lenses</span></div>
+    <div class="metric card"><b data-count="100" data-suf="%">0</b><span>Claims source-graded</span></div>
     <div class="metric card"><b data-count="1592">0</b><span>RBI chunks indexed</span></div>
-    <div class="metric card"><b data-count="78" data-suf="%">0</b><span>Sample readiness</span></div>
+    <div class="metric card"><b data-count="5">0</b><span>Grounded sectors</span></div>
   </div>
 </section>
 
 <section class="wrap">
-  <div class="reveal"><div class="eyebrow">The team</div><div class="h2">Six agents, one answer</div>
-  <p class="lead">Each agent owns a dimension and a deep page. Open one to go deep.</p></div>
+  <div class="reveal"><div class="eyebrow">The toolkit</div><div class="h2">One question. The right agents. A cited answer.</div>
+  <p class="lead">The orchestrator routes to only the specialists your question needs, then grades every claim. Each capability has a deep page — open one to go further.</p></div>
   <div class="agents">
-    <a class="agent card reveal" href="compliance.html" data-link><div class="ic">⬡</div><h3>Compliance</h3><p>Readiness against the RBI directions that apply to you, every claim cited.</p><div class="go">Open deep page →</div></a>
-    <a class="agent card reveal" href="pestel.html" data-link><div class="ic">◈</div><h3>PESTEL</h3><p>Six macro forces shaping Indian FinTech, scored and animated.</p><div class="go">Open deep page →</div></a>
-    <a class="agent card reveal" href="swot.html" data-link><div class="ic">◆</div><h3>SWOT &amp; strategy</h3><p>Where regulation, market and trend collide — the board's four corners.</p><div class="go">Open deep page →</div></a>
-    <a class="agent card reveal" href="trends.html" data-link><div class="ic">◭</div><h3>Trends</h3><p>Signal over noise — current trajectory and the 12–18 month read.</p><div class="go">Open deep page →</div></a>
-    <a class="agent card reveal" href="competitors.html" data-link><div class="ic">⬢</div><h3>Market</h3><p>Who's funded, how they're positioned, on an animated map.</p><div class="go">Open deep page →</div></a>
-    <a class="agent card reveal" href="compliance.html" data-link><div class="ic">✶</div><h3>Faithfulness</h3><p>Every answer is gated — claims must trace to a real source.</p><div class="go">See it in action →</div></a>
+    <a class="agent card reveal" href="gapfinder.html" data-link><div class="ic">◎</div><h3>Gap Finder</h3><p>Mine a competitor's reviews → the quantified weakness → your finance-gated opening. Any sector.</p><div class="go">Find an opening →</div></a>
+    <a class="agent card reveal" href="watchtower.html" data-link><div class="ic">◉</div><h3>Watchtower</h3><p>Live regulatory change-monitoring, severity-ranked — the answer moves only when the market does.</p><div class="go">Open the radar →</div></a>
+    <a class="agent card reveal" href="competitors.html" data-link><div class="ic">⬢</div><h3>Market</h3><p>Who's funded, how they're positioned, and where the wall has a crack — on an animated map.</p><div class="go">Open deep page →</div></a>
+    <a class="agent card reveal" href="pestel.html" data-link><div class="ic">◈</div><h3>PESTEL</h3><p>The macro forces shaping your sector, scored, animated, and relative to your rivals.</p><div class="go">Open deep page →</div></a>
+    <a class="agent card reveal" href="swot.html" data-link><div class="ic">◆</div><h3>SWOT &amp; strategy</h3><p>The board's four corners — each item benchmarked <i>vs. a named competitor</i>, not in a vacuum.</p><div class="go">Open deep page →</div></a>
+    <a class="agent card reveal" href="trends.html" data-link><div class="ic">◭</div><h3>Trends</h3><p>Signal over noise — the current trajectory and the 12–18 month read for your market.</p><div class="go">Open deep page →</div></a>
+    <a class="agent card reveal" href="compliance.html" data-link><div class="ic">⬡</div><h3>Compliance (RBI)</h3><p>The deepest-grounded lens: readiness against the RBI directions that apply, every claim cited.</p><div class="go">Open deep page →</div></a>
+    <a class="agent card reveal" href="agents.html" data-link><div class="ic">✶</div><h3>Live agents</h3><p>Watch the team work in real time — routing, cross-examination, and the faithfulness gate.</p><div class="go">See it in action →</div></a>
   </div>
 </section>
 
-<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. CompliSense summarizes RBI documents that may be outdated, draft, or incomplete. Verify every point against the cited primary source and consult a qualified professional or the RBI directly before acting.</p><div>CompliSense · grounded agentic intelligence for Indian FinTech</div></div></footer>
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. CompliSense grounds answers in public sources and RBI documents that may be outdated, draft, or incomplete. Verify every point against the cited primary source and consult a qualified professional before acting.</p><div>CompliSense · grounded agentic intelligence for any business</div></div></footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="engine.js"></script>
+<script src="engine.js?v=3"></script>
+<script>
+/* Hero → the real on-page Ask panel (live pipeline, provenance-graded). */
+function heroAsk(){
+  const v=(document.getElementById('q').value||'').trim();if(!v)return;
+  const inp=document.getElementById('csq'),panel=document.getElementById('csask'),go=document.getElementById('csgo');
+  if(inp&&panel&&go){inp.value=v;panel.classList.add('show');go.click();}
+}
+function heroChip(el){document.getElementById('q').value=el.textContent;heroAsk();}
+</script>
 </body>
 </html>

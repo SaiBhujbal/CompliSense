@@ -3,42 +3,197 @@
 <title>PESTEL · CompliSense</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" /></head>
+<link rel="stylesheet" href="style.css?v=3" />
+<style>
+/* ---- force-field hero: six forces physically pressing on your business ---- */
+.ffcard{position:relative;background:radial-gradient(120% 120% at 50% 45%,#10141c 0%,#0a0d13 72%);border:1px solid var(--stroke);border-radius:var(--rl);padding:12px;overflow:hidden}
+.ffield{position:relative;width:100%;aspect-ratio:16/10;min-height:420px}
+.ffield svg{position:absolute;inset:0;width:100%;height:100%}
+.ff-link{fill:none;opacity:.28}
+.ff-node{cursor:pointer}
+.ff-node circle.halo{opacity:.14;transition:.3s}
+.ff-node:hover circle.halo{opacity:.32}
+.ff-node text.fk{font-family:'Space Grotesk';font-size:13px;font-weight:500;fill:var(--text)}
+.ff-node text.fs2{font-family:'Space Grotesk';font-size:10px;fill:#8b95a5}
+.ff-state{font-family:'Space Grotesk';font-size:8.5px;letter-spacing:.12em;text-transform:uppercase}
+.ff-core-lab{font-family:'Space Grotesk';font-size:11px;letter-spacing:.16em;fill:var(--teal);text-transform:uppercase}
+.ff-hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:var(--faint);font-size:11.5px;pointer-events:none}
+.ffp{opacity:.85}
+</style></head>
 <body data-page="pestel">
 <header class="phead wrap">
   <a class="backlink" href="index.html" data-link>← all agents</a>
-  <div class="eyebrow">PESTEL agent · thinking_level: medium</div>
+  <div class="eyebrow">PESTEL agent · thinking_level: high</div>
   <h1 class="grad glow">PESTEL</h1>
-  <p>Six macro forces shaping Indian FinTech — scored, ranked, and grounded in the environment.</p>
+  <p>Six macro forces physically pressing on your business — thicker streams press harder, colour is momentum. Tap a force to open its full breakdown.</p>
 </header>
 
-<section class="wrap"><div class="grid g2">
-  <div class="card reveal" style="height:400px"><canvas id="radar" role="img" aria-label="PESTEL radar of six factors"></canvas></div>
+<section class="wrap" style="padding-top:6px;padding-bottom:0"><div class="monitor reveal" id="monitor"></div></section>
+
+<section class="wrap" style="padding-top:18px">
+  <div class="ffcard reveal">
+    <div class="ffield"><svg id="ff" viewBox="0 0 900 560"></svg></div>
+    <div class="ff-hint">particle flow = pressure on your business · tap any force for sub-drivers, history &amp; sources</div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="reveal"><div class="h2">Six forces over time</div><p class="lead">Each line is one force, 2021→2026E, <b style="color:var(--text)">coloured by momentum</b> — green growing, blue recovering, yellow steady, red tightening, amber intensifying, teal emerging. Click any point to open that force's history.</p></div>
+  <div class="grid g2">
+  <div class="card reveal" style="height:400px"><canvas id="radar" role="img" aria-label="PESTEL six-force trajectory line chart"></canvas></div>
   <div class="card reveal" id="bars"></div>
 </div></section>
 
 <section class="wrap">
-  <div class="reveal"><div class="h2">What it means for you</div><p class="lead">The one-line read per force, with its driver.</p></div>
+  <div class="reveal"><div class="h2">What it means for you</div><p class="lead">Tap any force to open the full breakdown — sub-drivers, board implications, and the sources behind the score.</p></div>
   <div class="grid g3" id="cards"></div>
 </section>
 
 <footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Verify against the cited primary source.</p><div>CompliSense · PESTEL agent</div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="engine.js"></script>
+<script src="engine.js?v=3"></script>
 <script>
+const YRS=['’21','’22','’23','’24','’25','’26E'];
 const F=[
- {k:'Political',s:7,c:'#8b7bff',t:'Pro-digital policy, but tight RBI scrutiny of lending and PA settlements.',src:'[RBI policy]'},
- {k:'Economic',s:8,c:'#3df0ff',t:'$2.4B FinTech funding in 2025; early-stage up 78% YoY.',src:'[Tracxn 2025]'},
- {k:'Social',s:8,c:'#39e6a8',t:'UPI-native users; trust hinges on transparent, fair conduct.',src:'[Sector data]'},
- {k:'Technological',s:9,c:'#ffc24b',t:'Account Aggregator rails plus AI underwriting reshape the stack.',src:'[AA MD]'},
- {k:'Environmental',s:4,c:'#56628c',t:'Low direct exposure; ESG disclosure rising for lenders.',src:'[ESG]'},
- {k:'Legal',s:6,c:'#ff5db1',t:'DPDP Act, KYC MD 2016, PA Directions 2025 all in force.',src:'[Multiple]'},
+ {k:'Political',s:7,c:'#8089e8',state:'Intensifying',ts:'#d9a34e',traj:[4,5,5,6,7,7],
+  why:'Climbing steadily — the RBI has shifted from enabler to firm supervisor, and scrutiny only tightens from here.',
+  t:'Pro-digital policy, but tight RBI scrutiny of lending and PA settlements.',src:'[RBI policy]',
+  lede:'India’s state actively promotes digital finance (UPI, AA, ONDC), yet the RBI has shifted from enabler to firm supervisor — first-loss guarantees, PA settlements, and outsourcing are all under closer watch.',
+  subs:[['Regulatory intent',8],['Policy stability',6],['Enforcement intensity',8],['Cross-border alignment',6]],
+  imp:[['Budget for a supervisory, not permissive, regulator','expect audits & periodic returns'],
+       ['Watch DLG / pass-through circulars — they move fast','a single circular can void a model'],
+       ['Government rails (UPI, AA, ONDC) lower distribution cost','build on them, don’t fight them']],
+  cites:['RBI policy stance','Digital Lending 2025','PA Directions 2025']},
+ {k:'Economic',s:8,c:'#4cc3b6',state:'Recovering',ts:'#5aa0ef',traj:[8,7,4,5,7,8],
+  why:'Bottoming in ’23 then climbing back — funding fell into a trough and is now rebuilding off the bottom, but more selectively than before.',
+  t:'$2.4B FinTech funding in 2025; early-stage up 78% YoY.',src:'[Tracxn 2025]',
+  lede:'Funding has rebounded off the 2023 trough, concentrated in early-stage and profitable-path models. Capital is available but discriminating — unit economics and a compliance story now gate the cheque.',
+  subs:[['Funding availability',8],['Cost of capital',6],['Market size / TAM',9],['Margin pressure',5]],
+  imp:[['Early-stage capital is open — but diligence now probes compliance','have the licence path ready'],
+       ['Rate environment keeps lending spreads tight','model NIM conservatively'],
+       ['India’s underbanked TAM remains the core tailwind','MSME & thin-file credit lead']],
+  cites:['Tracxn 2025','Sector funding data']},
+ {k:'Social',s:8,c:'#7bbf8f',state:'Steady',ts:'#e0c451',traj:[7,7,8,8,8,8],
+  why:'Flat at a high level — adoption is already deep and stable; the variable is conduct, not reach.',
+  t:'UPI-native users; trust hinges on transparent, fair conduct.',src:'[Sector data]',
+  lede:'A UPI-native, mobile-first population adopts new rails fast — but trust is fragile. Recovery-practice scandals and opaque fees trigger both customer churn and regulatory action.',
+  subs:[['Digital adoption',9],['Trust / conduct sensitivity',8],['Financial literacy',5],['Grievance expectations',7]],
+  imp:[['Fair-practice & transparent pricing are retention features','not just compliance'],
+       ['Recovery-agent conduct is a reputational landmine','document & supervise LSPs'],
+       ['Vernacular, consent-first UX widens the funnel','design for thin-file users']],
+  cites:['Fair Practices Code','Digital Lending 2025 (conduct)']},
+ {k:'Technological',s:9,c:'#d9a34e',state:'Accelerating',ts:'#57c98a',traj:[4,5,6,7,8,9],
+  why:'Steepening curve — AA rails plus AI underwriting compound each year; the rate of change is itself increasing.',
+  t:'Account Aggregator rails plus AI underwriting reshape the stack.',src:'[AA MD]',
+  lede:'The Account Aggregator framework plus AI underwriting are the biggest structural shift — consent-based data sharing collapses onboarding cost, while model risk and explainability become new supervisory frontiers.',
+  subs:[['AA data rails maturity',8],['AI underwriting edge',9],['Infra / infosec demands',7],['Model-risk scrutiny',6]],
+  imp:[['Build AA-consented data flows into the core model','it is the durable moat'],
+       ['AI underwriting must stay explainable & auditable','RBI scrutiny is rising'],
+       ['Infosec & data-localisation are table stakes','India-resident data, audited stack']],
+  cites:['Account Aggregator MD','Digital Lending 2025 (data)']},
+ {k:'Environmental',s:4,c:'#6f7891',state:'Emerging',ts:'#4cc3b6',traj:[1,1,2,2,3,4],
+  why:'Rising from a low base — small today but on a clear upward path as ESG disclosure expectations spread to lenders.',
+  t:'Low direct exposure; ESG disclosure rising for lenders.',src:'[ESG]',
+  lede:'Direct environmental exposure is low for a digital lender, but ESG and climate-risk disclosure expectations are rising — relevant mainly if you lend to MSMEs in climate-exposed sectors or chase ESG-linked capital.',
+  subs:[['Direct exposure',2],['ESG disclosure pressure',5],['Green-finance opportunity',5],['Portfolio climate risk',4]],
+  imp:[['Low priority today — monitor, don’t over-invest','keep it on the radar'],
+       ['ESG-linked capital may reward a basic framework','optional differentiator'],
+       ['Climate-exposed MSME books carry latent risk','factor into credit policy']],
+  cites:['ESG disclosure norms']},
+ {k:'Legal',s:6,c:'#e08896',state:'Tightening',ts:'#e0697f',traj:[4,5,5,6,7,8],
+  why:'Ratcheting up — each year adds another in-force regime (DPDP, PA, DLG); density and penalty severity keep rising.',
+  t:'DPDP Act, KYC MD 2016, PA Directions 2025 all in force.',src:'[Multiple]',
+  lede:'A dense, overlapping legal surface — RBI directions plus the DPDP Act (MeitY) — all in force and amended often. This is the dimension where CompliSense’s grounded, cited answers earn their keep.',
+  subs:[['Regulatory density',8],['Change velocity',7],['Penalty severity',7],['Interpretation clarity',5]],
+  imp:[['Multiple regimes apply at once — map every one','RBI + DPDP + PSS Act'],
+       ['Rules are amended frequently — freshness matters','a stale read is a wrong read'],
+       ['Every obligation here is citable to a primary source','that is the product']],
+  cites:['KYC MD 2016','PA Directions 2025','DPDP Act 2023','SBR 2023']},
 ];
-radar('radar',F.map(f=>f.k.slice(0,4)),F.map(f=>f.s));
-document.getElementById('bars').innerHTML=F.map(f=>`<div class="fbar" style="--c:${f.c}"><div class="ft"><b>${f.k}</b><span class="v">${f.s}/10</span></div><div class="track"><div class="fill" data-v="${f.s*10}"></div></div></div>`).join('');
-document.getElementById('cards').innerHTML=F.map(f=>`<div class="card reveal" style="border-top:2px solid ${f.c}"><b style="color:${f.c}">${f.k}</b><p style="color:var(--muted);font-size:13.5px;margin-top:8px">${f.t}</p><div class="src" style="margin-top:10px">${f.src}</div></div>`).join('');
+function sparkHTML(f){const mx=Math.max(...f.traj);
+  return `<div class="spark">${f.traj.map((v,n)=>`<i class="${n===f.traj.length-1?'last':''}" data-h="${Math.round(v/mx*100)}"></i>`).join('')}</div>`;}
+function miniSpark(f){const mx=Math.max(...f.traj);
+  return `<div class="spark" style="--ts:${f.ts};height:30px;margin:10px 0 0">${f.traj.map((v,n)=>`<i class="${n===f.traj.length-1?'last':''}" style="height:${Math.round(v/mx*100)}%"></i>`).join('')}</div>`;}
+
+multiline('radar',YRS,F.map(f=>({name:f.k,data:f.traj,color:f.ts})),{min:0,max:10,onPoint:(di)=>openForce(di)});
+document.getElementById('bars').innerHTML=F.map((f,i)=>`<div class="fbar clickable" style="--c:${f.c}" onclick="openForce(${i})"><div class="ft"><b>${f.k}</b><span class="v">${f.s}/10</span></div><div class="track"><div class="fill" data-v="${f.s*10}"></div></div></div>`).join('');
+document.getElementById('cards').innerHTML=F.map((f,i)=>`<div class="card reveal clickable" style="border-top:2px solid ${f.c}" onclick="openForce(${i})"><div style="display:flex;justify-content:space-between;align-items:center"><b style="color:${f.c}">${f.k}</b><span class="traj-state" style="--ts:${f.ts}"><span class="td"></span>${f.state}</span></div>${miniSpark(f)}<p style="color:var(--muted);font-size:13px;margin-top:6px">${f.t}</p><div class="morebtn" style="--dc:${f.c}">Open breakdown →</div></div>`).join('');
+
+function openForce(i){const f=F[i];
+  drawer(`
+    <div class="dkey">PESTEL · macro force</div>
+    <h2>${f.k}</h2>
+    <div class="dhead"><div class="dscore">${f.s}<small>/10</small></div><div class="traj-state" style="--ts:${f.ts}"><span class="td"></span>${f.state}</div></div>
+    <p class="dlede">${f.lede}</p>
+    <div class="dsec">Trajectory · ${YRS[0]}–${YRS[YRS.length-1]}</div>
+    <div class="trajwrap">
+      ${sparkHTML(f)}
+      <div style="display:flex;justify-content:space-between;color:var(--faint);font-size:10.5px;margin-bottom:10px">${YRS.map(y=>`<span>${y}</span>`).join('')}</div>
+      <p class="trajwhy"><b style="color:${f.ts}">Why ${f.state.toLowerCase()}:</b> ${f.why}</p>
+    </div>
+    <div class="dsec">Sub-drivers</div>
+    ${f.subs.map(s=>`<div class="dsub"><div class="dsub-t"><span>${s[0]}</span><span class="v">${s[1]}/10</span></div><div class="dtrack"><div class="dfill" data-v="${s[1]*10}"></div></div></div>`).join('')}
+    <div class="dsec">What it means for you</div>
+    <ul class="dimp">${f.imp.map(m=>`<li>${m[0]}<br><span>${m[1]}</span></li>`).join('')}</ul>
+    <div class="dsec">Grounded in</div>
+    <div class="dcite">${f.cites.map(c=>`<span class="c">${c}</span>`).join('')}</div>
+  `,f.c);
+}
+
+/* ================= FORCE-FIELD HERO ================= */
+(function forceField(){
+  const svg=document.getElementById('ff');if(!svg)return;
+  const W=900,H=560,CX=W/2,CY=H/2-6,RX=330,RY=196;
+  const pos=F.map((f,i)=>{const a=-Math.PI/2+i*2*Math.PI/F.length;
+    return {x:CX+RX*Math.cos(a),y:CY+RY*Math.sin(a),a}});
+  // net pressure vector (forces push toward the centre; stronger = more push)
+  let nx=0,ny=0;
+  F.forEach((f,i)=>{nx+=(CX-pos[i].x)/RX*f.s;ny+=(CY-pos[i].y)/RY*f.s});
+  const mag=Math.hypot(nx,ny)||1;nx/=mag;ny/=mag;
+
+  const links=F.map((f,i)=>`<line class="ff-link" x1="${pos[i].x}" y1="${pos[i].y}" x2="${CX}" y2="${CY}" stroke="${f.ts}" stroke-width="${(f.s/2.2).toFixed(1)}"/>`).join('');
+  const nodes=F.map((f,i)=>{const p=pos[i];const above=p.y<CY;
+    return `<g class="ff-node" transform="translate(${p.x},${p.y})" onclick="openForce(${i})">
+      <circle class="halo" r="40" fill="${f.ts}"/>
+      <circle r="27" fill="#141922" stroke="${f.ts}" stroke-width="2"/>
+      <text class="fs2" text-anchor="middle" dy="4">${f.s}/10</text>
+      <text class="fk" text-anchor="middle" y="${above?-48:56}">${f.k}</text>
+      <text class="ff-state" text-anchor="middle" y="${above?-34:70}" fill="${f.ts}">${f.state}</text>
+    </g>`;}).join('');
+  const core=`<g id="ffcore"><circle r="46" fill="rgba(76,195,182,.07)" stroke="var(--teal)" stroke-width="1.5" id="ffbreath"/>
+      <circle r="34" fill="#10151d" stroke="rgba(76,195,182,.4)" stroke-width="1"/>
+      <text class="ff-core-lab" text-anchor="middle" dy="-2">YOUR</text>
+      <text class="ff-core-lab" text-anchor="middle" dy="12">BUSINESS</text></g>`;
+  svg.innerHTML=links+nodes+core;
+  const coreEl=svg.querySelector('#ffcore'),breath=svg.querySelector('#ffbreath');
+
+  // particles: pressure streams flowing node -> centre, speed & density = score
+  let parts=[],t=0;
+  setInterval(()=>{
+    t+=0.04;
+    F.forEach((f,i)=>{
+      const mine=parts.filter(p=>p.i===i);
+      if(mine.length<Math.ceil(f.s/2)&&Math.random()<f.s/40){
+        const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('class','ffp');c.setAttribute('r',1.5+f.s/5);c.setAttribute('fill',f.ts);
+        svg.insertBefore(c,svg.querySelector('.ff-node'));
+        parts.push({i,el:c,t:0,sp:0.004+f.s*0.0016});
+      }});
+    // centre wobbles under the net pressure + breathes
+    const wob=Math.sin(t)*7;
+    coreEl.setAttribute('transform',`translate(${CX+nx*wob},${CY+ny*wob})`);
+    breath.setAttribute('r',46+Math.sin(t*1.6)*3);
+    parts=parts.filter(p=>{
+      p.t+=p.sp;
+      if(p.t>=0.86){p.el.remove();return false}  // absorbed at the core edge
+      const px=pos[p.i].x+(CX-pos[p.i].x)*p.t, py=pos[p.i].y+(CY-pos[p.i].y)*p.t;
+      p.el.setAttribute('cx',px);p.el.setAttribute('cy',py);
+      p.el.setAttribute('opacity',(0.9-p.t*0.5).toFixed(2));
+      return true;});
+  },40);
+})();
+mountMonitor('pestel');
 </script>
 </body></html>

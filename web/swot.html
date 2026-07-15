@@ -3,39 +3,212 @@
 <title>SWOT &amp; strategy · CompliSense</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" /></head>
+<link rel="stylesheet" href="style.css?v=3" />
+<style>
+/* ---- SWOT quadrant map hero ---- */
+.qmapcard{position:relative;background:radial-gradient(120% 120% at 50% 45%,#10141c 0%,#0a0d13 72%);border:1px solid var(--stroke);border-radius:var(--rl);padding:12px;overflow:hidden}
+.qmap{position:relative;width:100%;aspect-ratio:16/10;min-height:430px}
+.qmap svg{position:absolute;inset:0;width:100%;height:100%}
+.qm-axis{stroke:rgba(255,255,255,.10);stroke-width:1}
+.qm-zone{opacity:.05}
+.qm-axlab{font-family:'Space Grotesk';font-size:10px;letter-spacing:.2em;fill:#5f6b7a;text-transform:uppercase}
+.qm-qlab{font-family:'Space Grotesk';font-size:11.5px;letter-spacing:.12em;font-weight:500}
+.qm-b{cursor:pointer}
+.qm-b circle.bb{transition:.25s;opacity:.85}
+.qm-b:hover circle.bb{opacity:1;filter:drop-shadow(0 0 10px var(--bc))}
+.qm-b text{font-family:'Space Grotesk';font-size:10px;fill:var(--text);pointer-events:none}
+.qm-b text.imp{font-size:9px;fill:#0b0d12;font-weight:700}
+.qm-needle{transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.qm-hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:var(--faint);font-size:11.5px;pointer-events:none}
+</style></head>
 <body data-page="swot">
 <header class="phead wrap">
   <a class="backlink" href="index.html" data-link>← all agents</a>
   <div class="eyebrow">Strategy synthesis · thinking_level: high</div>
   <h1 class="grad glow">SWOT &amp; strategy</h1>
-  <p>Regulation, market and trend, synthesized into the four corners a board actually acts on.</p>
+  <p>Regulation, market and trend — synthesized into the four corners, weighted by impact, and crossed into an actual strategy. Tap any item for the evidence.</p>
 </header>
+
+<section class="wrap">
+  <div class="card reveal posture">
+    <div class="pscore">SO</div>
+    <div style="flex:1;min-width:260px">
+      <b style="font-family:'Space Grotesk'">Strategic posture: Aggressive (Strengths × Opportunities)</b>
+      <p style="color:var(--muted);font-size:13.5px;margin-top:6px">Internal strengths outweigh weaknesses, and the opportunity field is wider than the threat field — the synthesis agent reads this as a <b style="color:var(--text)">grow-and-build</b> position, gated by one binding constraint: capital. Dots show each factor's weighted impact; tap any item for the breakdown.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:6px;padding-bottom:0"><div class="monitor reveal" id="monitor"></div></section>
+
+<section class="wrap" style="padding-top:18px">
+  <div class="qmapcard reveal">
+    <div class="qmap"><svg id="qm" viewBox="0 0 900 560"></svg></div>
+    <div class="qm-hint">bubble size = weighted impact · the needle points where your strategy tilts · tap a bubble for evidence</div>
+  </div>
+</section>
 
 <section class="wrap"><div class="swot" id="swot"></div></section>
 
 <section class="wrap">
-  <div class="reveal"><div class="h2">Recommended moves</div><p class="lead">Top three, prioritised — the synthesis agent's call.</p></div>
+  <div class="reveal"><div class="h2">TOWS strategy matrix</div><p class="lead">SWOT only lists factors — TOWS pairs them into moves. Each cell crosses an internal axis with an external one to produce an actual strategy.</p></div>
+  <div class="tows" id="tows"></div>
+</section>
+
+<section class="wrap">
+  <div class="reveal"><div class="h2">Sequenced moves</div><p class="lead">The matrix, prioritised into a timeline — the synthesis agent's call.</p></div>
   <div class="card reveal"><div class="tl">
-    <div class="ev"><b>Now · Close the capital gap</b><p>Stage the Series B to clear the ₹10 cr NOF floor ahead of Mar 2027, and pre-file change-of-control if any investor crosses 26%. <span class="src">[SBR 2023]</span></p></div>
-    <div class="ev"><b>Next · Productise co-lending</b><p>Partner a bank under the co-lending framework to expand MSME credit without balance-sheet strain. <span class="src">[Co-Lending 2025]</span></p></div>
-    <div class="ev"><b>Later · Payments upsell</b><p>Pursue a PA licence to add settlement revenue once net worth clears ₹15 cr. <span class="src">[PA 2025]</span></p></div>
+    <div class="ev"><b>Now · Close the capital gap (WT defence)</b><p>Stage the Series B to clear the ₹10 cr NOF floor ahead of Mar 2027, and pre-file change-of-control if any investor crosses 26%. <span class="src">[SBR 2023]</span></p></div>
+    <div class="ev"><b>Next · Productise co-lending (SO offence)</b><p>Partner a bank under the co-lending framework to expand MSME credit without balance-sheet strain. <span class="src">[Co-Lending 2025]</span></p></div>
+    <div class="ev"><b>Later · Payments upsell (SO offence)</b><p>Pursue a PA licence to add settlement revenue once net worth clears ₹15 cr. <span class="src">[PA 2025]</span></p></div>
   </div></div>
 </section>
 
 <footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Verify against the cited primary source.</p><div>CompliSense · strategy synthesis</div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="engine.js"></script>
+<script src="engine.js?v=3"></script>
 <script>
+/* each item: [title, impact 1-5, one-line, detail lede, evidence bullets, citations] */
 const Q=[
- {h:'Strengths',i:'S',c:'#39e6a8',li:['Citation-grounded RBI answers','Account-Aggregator-ready data model','Faithfulness gate on every claim']},
- {h:'Weaknesses',i:'W',c:'#ffc24b',li:['NOF below ₹10 cr 2027 target','Manual compliance reporting','Thin capital buffer']},
- {h:'Opportunities',i:'O',c:'#3df0ff',li:['Co-lending with banks','Underserved MSME credit','PA licence → payments upsell']},
- {h:'Threats',i:'T',c:'#ff5d6c',li:['Tightening DLG / pass-through rules','Funding cool-down risk','Incumbent super-apps']},
+ {h:'Strengths',i:'S',c:'#4cc3b6',items:[
+   ['Citation-grounded RBI answers',5,'Every claim traces to a primary source','The faithfulness gate resolves each [S#] citation against the retrieved RBI text before an answer ships — the core trust differentiator versus a generic LLM.',
+     ['Deterministic citation resolution on every claim','Refuses to surface an unsupported assertion','Auditable answer trail a compliance team can defend'],['Faithfulness gate','KYC MD 2016']],
+   ['Account-Aggregator-ready data model',4,'Built on consent-based rails','Onboarding and underwriting are designed around AA-consented data, collapsing acquisition cost and aligning with the direction the regulator is pushing.',
+     ['Consent-first data capture','Lower CAC than document-collection flows','Forward-compatible with RBI data norms'],['Account Aggregator MD']],
+   ['Faithfulness gate on every claim',5,'Hallucination control as a feature','Model risk is the #1 objection in regulated finance; gating output on source-resolution turns that objection into a selling point.',
+     ['Converts the "LLMs hallucinate" objection into trust','Differentiates from chatbot competitors','Supports a future eval/benchmark moat (RBI-NormBench)'],['Faithfulness gate']]]},
+ {h:'Weaknesses',i:'W',c:'#d9a34e',items:[
+   ['NOF below ₹10 cr 2027 target',5,'Binding regulatory constraint','The net-owned-funds glide path is a hard floor — miss it and registration is at risk. This is the single constraint that gates every growth move.',
+     ['₹10 cr NOF required by Mar 2027','Directly limits balance-sheet lending','Forces the Series B onto a deadline'],['SBR 2023']],
+   ['Manual compliance reporting',3,'Operational drag, not existential','Periodic returns and reporting are still partly manual — a cost and error risk, but addressable with process before it becomes a penalty.',
+     ['Returns / reporting partly manual','Error and timeliness risk','Automatable — roadmap item, not a blocker'],['KYC MD 2016']],
+   ['Thin capital buffer',4,'Low margin for shock','A thin buffer leaves little room for a funding delay or a credit shock, amplifying the NOF constraint.',
+     ['Limited runway against a funding slip','Amplifies the NOF deadline risk','Pre-file change-of-control to de-risk the raise'],['SBR 2023']]]},
+ {h:'Opportunities',i:'O',c:'#8089e8',items:[
+   ['Co-lending with banks',5,'Scale credit without balance-sheet strain','The co-lending framework lets a bank fund the book while you originate and service — expanding reach without consuming scarce NOF.',
+     ['Grows MSME credit off the bank’s balance sheet','Directly relieves the capital constraint','Regulator-sanctioned distribution model'],['Co-Lending 2025']],
+   ['Underserved MSME credit',4,'Large, structural TAM','Thin-file and MSME borrowers remain underserved — the durable tailwind behind Indian FinTech credit.',
+     ['Deep, under-penetrated demand','AA + AI underwriting unlock thin-file lending','Aligned with policy intent'],['Sector data','Account Aggregator MD']],
+   ['PA licence → payments upsell',4,'Adjacent revenue once capitalised','A Payment Aggregator licence adds settlement revenue and stickiness — available once net worth clears the ₹15 cr threshold.',
+     ['Settlement revenue layer','Cross-sell to existing borrowers','Gated on the same capital raise'],['PA Directions 2025']]]},
+ {h:'Threats',i:'T',c:'#e08896',items:[
+   ['Tightening DLG / pass-through rules',5,'A circular can void a model','First-loss-default-guarantee and pass-through rules move fast; a single circular can invalidate a lending structure overnight — the freshness risk made concrete.',
+     ['DLG capped at 5% of portfolio','Direct-disbursal / no pass-through rules','Requires continuous regulatory monitoring'],['Digital Lending 2025']],
+   ['Funding cool-down risk',3,'Timing risk on the raise','A market cool-down could delay the Series B against the NOF deadline — a timing threat that compounds the thin buffer.',
+     ['Capital markets are discriminating','Delay collides with the Mar 2027 floor','Mitigate by raising early, not late'],['Sector funding data']],
+   ['Incumbent super-apps',4,'Distribution disadvantage','Super-apps own distribution and trust at scale; competing head-on is costly — defend on compliance depth and niche, not reach.',
+     ['Incumbents hold distribution & data','Hard to out-spend on acquisition','Win on grounded-compliance depth & focus'],['Market data']]]},
 ];
-document.getElementById('swot').innerHTML=Q.map(q=>`<div class="q reveal" style="--qc:${q.c}"><h3><i>${q.i}</i>${q.h}</h3><ul>${q.li.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
+
+const sym={S:'S',W:'W',O:'O',T:'T'};
+document.getElementById('swot').innerHTML=Q.map((q,qi)=>`<div class="q reveal" style="--qc:${q.c}">
+  <h3><i>${q.i}</i>${q.h}<span class="qcount">${q.items.length}</span></h3>
+  <ul>${q.items.map((it,ii)=>`<li class="clickable" onclick="openItem(${qi},${ii})">
+    <div class="li-h"><b>${it[0]}</b><span class="dots">${[1,2,3,4,5].map(n=>`<i class="${n<=it[1]?'on':''}"></i>`).join('')}</span></div>
+    <small>${it[2]}</small></li>`).join('')}</ul></div>`).join('');
+
+function openItem(qi,ii){const q=Q[qi],it=q.items[ii];
+  drawer(`
+    <div class="dkey">${q.h} · weighted impact ${it[1]}/5</div>
+    <h2>${it[0]}</h2>
+    <div class="dhead"><div class="dscore">${it[1]}<small>/5</small></div><div class="dtrend">${q.h.slice(0,-1)} factor</div></div>
+    <p class="dlede">${it[3]}</p>
+    <div class="dsec">Evidence</div>
+    <ul class="dimp">${it[4].map(b=>`<li>${b}</li>`).join('')}</ul>
+    <div class="dsec">Grounded in</div>
+    <div class="dcite">${it[5].map(c=>`<span class="c">${c}</span>`).join('')}</div>
+  `,q.c);
+}
+
+const TOWS=[
+ {k:'SO · Maxi-Maxi',t:'Use strengths to seize opportunities',tc:'#4cc3b6',rows:[
+   ['Grounded compliance × co-lending','Lead bank partnerships with an auditable, cited compliance posture banks can trust.'],
+   ['AA data model × MSME credit','Turn consent-based data into thin-file underwriting at scale.']]},
+ {k:'ST · Maxi-Mini',t:'Use strengths to blunt threats',tc:'#7bbf8f',rows:[
+   ['Faithfulness gate × DLG churn','Citation freshness pipeline keeps you ahead of fast-moving circulars.'],
+   ['Compliance depth × super-apps','Defend a niche incumbents won’t match: grounded, defensible answers.']]},
+ {k:'WO · Mini-Maxi',t:'Fix weaknesses to unlock opportunities',tc:'#8089e8',rows:[
+   ['Capital gap × co-lending','Co-lending grows the book without consuming scarce NOF.'],
+   ['Manual reporting × PA upsell','Automate reporting first, then add the settlement revenue layer.']]},
+ {k:'WT · Mini-Mini',t:'Shore up weaknesses against threats',tc:'#e08896',rows:[
+   ['Thin buffer × funding cool-down','Raise the Series B early; pre-file change-of-control to de-risk.'],
+   ['NOF floor × tightening rules','Hit the ₹10 cr glide path ahead of Mar 2027 — non-negotiable.']]},
+];
+document.getElementById('tows').innerHTML=TOWS.map(c=>`<div class="tcell reveal" style="--tc:${c.tc}">
+  <div class="tk">${c.k}</div><h4>${c.t}</h4>
+  ${c.rows.map(r=>`<p><b>${r[0]}</b><br>${r[1]}</p>`).join('')}</div>`).join('');
+
+/* ================= QUADRANT MAP HERO ================= */
+(function qmap(){
+  const svg=document.getElementById('qm');if(!svg)return;
+  const W=900,H=560,CX=W/2,CY=H/2;
+  // standard SWOT plane: x = Internal|External, y = Helpful|Harmful
+  const ZONES=[{qi:0,x:0,y:0},{qi:2,x:1,y:0},{qi:1,x:0,y:1},{qi:3,x:1,y:1}]; // S,O,W,T
+  const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)};
+  let out=[];
+  // zone tints + labels
+  ZONES.forEach(z=>{const q=Q[z.qi];
+    out.push(`<rect class="qm-zone" x="${z.x*CX}" y="${z.y*CY}" width="${CX}" height="${CY}" fill="${q.c}"/>`);
+    out.push(`<text class="qm-qlab" fill="${q.c}" x="${z.x?W-18:18}" y="${z.y?H-16:26}" text-anchor="${z.x?'end':'start'}">${q.h.toUpperCase()} · ${q.items.reduce((s,i)=>s+i[1],0)}</text>`);});
+  out.push(`<line class="qm-axis" x1="${CX}" y1="10" x2="${CX}" y2="${H-10}"/>`);
+  out.push(`<line class="qm-axis" x1="14" y1="${CY}" x2="${W-14}" y2="${CY}"/>`);
+  out.push(`<text class="qm-axlab" x="${CX/2}" y="16" text-anchor="middle">INTERNAL</text>`);
+  out.push(`<text class="qm-axlab" x="${CX+CX/2}" y="16" text-anchor="middle">EXTERNAL</text>`);
+  out.push(`<text class="qm-axlab" x="8" y="${CY/2}" transform="rotate(-90 12 ${CY/2})" text-anchor="middle">HELPFUL</text>`);
+  out.push(`<text class="qm-axlab" x="8" y="${CY+CY/2}" transform="rotate(-90 12 ${CY+CY/2})" text-anchor="middle">HARMFUL</text>`);
+  // bubbles: deterministic seed, then collision RELAXATION so none overlap
+  // (labels included in the effective radius), clamped to their own zone.
+  const bubbles=[];
+  ZONES.forEach(z=>{const q=Q[z.qi];
+    q.items.forEach((it,ii)=>{
+      const h1=hash(it[0]);
+      bubbles.push({z,qi:z.qi,ii,it,c:q.c,
+        bx:z.x*CX+80+(h1%1000)/1000*(CX-180),
+        by:z.y*CY+80+((h1>>3)%1000)/1000*(CY-165),
+        r:13+it[1]*4.5,ph:(h1%628)/100});});});
+  for(let iter=0;iter<120;iter++){
+    let moved=false;
+    for(let i=0;i<bubbles.length;i++)for(let j=i+1;j<bubbles.length;j++){
+      const a=bubbles[i],b=bubbles[j];
+      const need=a.r+b.r+30;               // +label clearance
+      let dx=b.bx-a.bx,dy=b.by-a.by,d=Math.hypot(dx,dy)||0.01;
+      if(d<need){moved=true;const push=(need-d)/2;dx/=d;dy/=d;
+        a.bx-=dx*push;a.by-=dy*push;b.bx+=dx*push;b.by+=dy*push;}
+    }
+    // clamp each bubble back inside its own quadrant (label space respected)
+    bubbles.forEach(b=>{
+      b.bx=Math.max(b.z.x*CX+b.r+34,Math.min((b.z.x+1)*CX-b.r-34,b.bx));
+      b.by=Math.max(b.z.y*CY+b.r+30,Math.min((b.z.y+1)*CY-b.r-26,b.by));});
+    if(!moved)break;
+  }
+  bubbles.forEach(b=>{
+    const short=b.it[0].length>20?b.it[0].slice(0,19)+'…':b.it[0];
+    out.push(`<g class="qm-b" id="qmb-${b.qi}-${b.ii}" style="--bc:${b.c}" transform="translate(${b.bx},${b.by})" onclick="openItem(${b.qi},${b.ii})">
+      <title>${b.it[0]} — impact ${b.it[1]}/5. ${b.it[2]}</title>
+      <circle class="bb" r="${b.r}" fill="${b.c}"/>
+      <text class="imp" text-anchor="middle" dy="3.5">${b.it[1]}</text>
+      <text text-anchor="middle" y="${b.r+13}">${short}</text>
+    </g>`);});
+  // posture needle at centre — points where the weighted mass tilts
+  const tot=q=>q.items.reduce((s,i)=>s+i[1],0);
+  const dx=(tot(Q[2])+tot(Q[3]))-(tot(Q[0])+tot(Q[1]));
+  const dy=(tot(Q[1])+tot(Q[3]))-(tot(Q[0])+tot(Q[2]));
+  const ang=Math.atan2(dy,dx)*180/Math.PI;
+  out.push(`<g transform="translate(${CX},${CY})">
+    <circle r="30" fill="#10151d" stroke="rgba(255,255,255,.14)"/>
+    <g class="qm-needle" style="transform:rotate(${ang}deg)"><path d="M-12,5 L22,0 L-12,-5 Z" fill="var(--teal)"/></g>
+    <circle r="3.5" fill="var(--teal)"/>
+  </g>`);
+  svg.innerHTML=out.join('');
+  // gentle float (interval-driven — rAF suspends in background tabs)
+  let t=0;
+  setInterval(()=>{t+=0.05;
+    bubbles.forEach((b,i)=>{const g=svg.querySelectorAll('.qm-b')[i];if(!g)return;
+      g.setAttribute('transform',`translate(${b.bx},${b.by+Math.sin(t+b.ph)*4})`)});
+  },50);
+})();
+mountMonitor('swot');
 </script>
 </body></html>

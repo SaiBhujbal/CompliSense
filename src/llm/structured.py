@@ -17,6 +17,18 @@ from pydantic import BaseModel
 T = TypeVar("T", bound=BaseModel)
 
 
+def safe_invoke(llm, messages: list, *, fallback: str) -> str:
+    """Plain-text invoke that NEVER raises. A single agent hitting a rate-limit (or
+    a dead provider fallback) must not crash the whole multi-agent run — it returns
+    a degraded report and the graph continues to synthesis."""
+    try:
+        r = llm.invoke(messages)
+        text = getattr(r, "content", None)
+        return text if (text and text.strip()) else fallback
+    except Exception:  # noqa: BLE001
+        return fallback
+
+
 def invoke_structured(llm, schema: type[T], messages: list, *, fallback: T) -> T:
     # 1. Native structured output (best when supported).
     try:

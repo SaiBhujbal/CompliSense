@@ -72,9 +72,14 @@ def _try_download(url: str, dest: Path) -> bool:
 
 
 def download_documents(manifest: IngestManifest) -> None:
-    if DATA_DIR.exists():
-        shutil.rmtree(DATA_DIR)
+    # Never wipe the whole data dir — it also holds chroma_db, slack_config,
+    # caches, and briefs when CHROMA_DB_PATH lives under RBI_DATA_PATH (Docker).
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    for stale in DATA_DIR.glob("*.pdf"):
+        try:
+            stale.unlink()
+        except OSError:
+            pass
 
     with open(DATA_SOURCES_FILE, "r", encoding="utf-8") as f:
         sources = yaml.safe_load(f) or {}

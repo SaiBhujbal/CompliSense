@@ -28,14 +28,18 @@ OPENAI_COMPAT_BASE_URL = os.getenv(
     "OPENAI_COMPAT_BASE_URL", "https://openrouter.ai/api/v1"
 )
 
+# Fallback provider used when the primary provider fails.
+LLM_FALLBACK_PROVIDER = os.getenv("LLM_FALLBACK_PROVIDER", "openrouter").lower()
+
 # Per-role model IDs. Roles: "reasoning" (answer/faithfulness) and "fast"
 # (orchestrator/scope-guard). Defaults below are CURRENTLY-LIVE Groq models as
 # of 2026-06 — NOTE: Groq has these scheduled for shutdown 2026-08-16, so treat
 # the env vars as the real knob and verify against the provider's model list.
 _MODEL_DEFAULTS = {
+    # qwen3.6-27b: 131k ctx, 32k output, native JSON mode + tool use, ~500 tok/s.
     "groq": {
-        "reasoning": "llama-3.3-70b-versatile",
-        "fast": "llama-3.1-8b-instant",
+        "reasoning": "qwen/qwen3.6-27b",
+        "fast": "qwen/qwen3.6-27b",
     },
     "google": {
         "reasoning": "gemini-2.5-pro",
@@ -66,9 +70,26 @@ REASONING_MODEL = os.getenv(
 FAST_MODEL = os.getenv(
     "FAST_MODEL", _MODEL_DEFAULTS.get(LLM_PROVIDER, {}).get("fast", "")
 )
+
+OPENROUTER_REASONING_MODEL = os.getenv(
+    "OPENROUTER_REASONING_MODEL", _MODEL_DEFAULTS["openrouter"]["reasoning"]
+)
+OPENROUTER_FAST_MODEL = os.getenv(
+    "OPENROUTER_FAST_MODEL", _MODEL_DEFAULTS["openrouter"]["fast"]
+)
+# Gemini models used when google is the FALLBACK provider (e.g. OpenRouter primary
+# runs out of credits). flash-lite is reliable, cheap, and — being non-gemini-3 —
+# has no thinking-token-eats-output problem, so it answers in full at LLM_MAX_TOKENS.
+GOOGLE_REASONING_MODEL = os.getenv("GOOGLE_REASONING_MODEL", "gemini-2.5-flash-lite")
+GOOGLE_FAST_MODEL = os.getenv("GOOGLE_FAST_MODEL", "gemini-2.5-flash-lite")
+# Groq models used when groq is the FALLBACK provider (separate free-tier quota
+# pool — survives Google 429s / OpenRouter 402s).
+GROQ_REASONING_MODEL = os.getenv("GROQ_REASONING_MODEL", _MODEL_DEFAULTS["groq"]["reasoning"])
+GROQ_FAST_MODEL = os.getenv("GROQ_FAST_MODEL", _MODEL_DEFAULTS["groq"]["fast"])
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.1"))
-# Bound output so we never blow the context window or run away on cost.
-LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "1024"))
+# Bound output so we never blow the context window or run away on cost. Set high
+# enough for DEPTH — shallow/truncated reports were a 1024-token artefact.
+LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "3072"))
 
 # Per-role thinking level for Gemini 3.x (generationConfig.thinkingConfig.thinkingLevel).
 # Reasoning agents (RBI, synthesis, faithfulness judge) think harder; fast agents
@@ -139,6 +160,8 @@ TAVILY_SEARCH_DEPTH = os.getenv("TAVILY_SEARCH_DEPTH", "advanced")
 TAVILY_MAX_RESULTS = int(os.getenv("TAVILY_MAX_RESULTS", "5"))
 # Hard cap on the Competitor agent's bounded-ReAct search loop.
 COMPETITOR_MAX_SEARCHES = int(os.getenv("COMPETITOR_MAX_SEARCHES", "4"))
+# Wall-clock budget so a slow LLM/provider cannot stall the Ask AI SSE stream.
+COMPETITOR_BUDGET_SECONDS = float(os.getenv("COMPETITOR_BUDGET_SECONDS", "120"))
 
 PESTEL_DOMAINS = [
     "rbi.org.in", "finance.gov.in", "tracxn.com",
@@ -156,6 +179,10 @@ MAX_FAITHFULNESS_RETRIES = int(os.getenv("MAX_FAITHFULNESS_RETRIES", "1"))
 # citation-resolution check. Off by default: saves an LLM call/query (rate-limit
 # friendly) and the deterministic [S#]->source check is the reliable signal.
 FAITHFULNESS_LLM_CHECK = os.getenv("FAITHFULNESS_LLM_CHECK", "false").lower() == "true"
+
+# Showcase mode: force ALL specialist agents to run (so the live agent-chat shows
+# the whole team working) instead of intent-routing to a subset.
+SHOWCASE_ALL_AGENTS = os.getenv("SHOWCASE_ALL_AGENTS", "false").lower() == "true"
 
 
 # --------------------------------------------------------------------------- #

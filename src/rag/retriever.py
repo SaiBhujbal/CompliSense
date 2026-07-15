@@ -9,19 +9,22 @@ Pipeline (all stages env-toggleable in config):
 Every returned chunk keeps its ``source``/``page`` metadata so the answerer can
 cite real documents instead of inventing them. If nothing clears the threshold,
 we return an empty list — the caller MUST refuse rather than hallucinate.
+
+Import / model / Chroma failures never propagate as uncaught exceptions from
+``retrieve()`` — they raise ``RagUnavailable`` so the RBI agent can refuse.
 """
 
-from .. import _bootstrap  # noqa: F401  -- init torch/ST before chromadb/onnxruntime
+from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
+from .. import _bootstrap  # noqa: F401  -- init torch/ST before chromadb/onnxruntime
 from .. import config
-from .embeddings import get_embeddings
+from .embeddings import RagUnavailable, embeddings_ready, get_embeddings
 
 
 @dataclass
@@ -39,21 +42,32 @@ class RetrievedChunk:
 
 
 def _ensure_store_exists() -> None:
-    if not Path(config.CHROMA_DB_PATH).exists():
-        raise FileNotFoundError(
+    root = Path(config.CHROMA_DB_PATH)
+    if not root.exists() or not (root / "chroma.sqlite3").exists():
+        raise RagUnavailable(
             f"Vector store not found at {config.CHROMA_DB_PATH}. "
-            "Run `python ingest_data.py` (or the ingest Docker profile) first."
+            "Run `docker compose --profile ingest run --rm ingest` "
+            "(or `python ingest_data.py`) first."
         )
 
 
 @lru_cache(maxsize=1)
-def get_vector_store() -> Chroma:
+def get_vector_store():
     _ensure_store_exists()
-    return Chroma(
-        persist_directory=config.CHROMA_DB_PATH,
-        embedding_function=get_embeddings(),
-        collection_name=config.CHROMA_COLLECTION,
-    )
+    try:
+        from langchain_chroma import Chroma
+
+        return Chroma(
+            persist_directory=config.CHROMA_DB_PATH,
+            embedding_function=get_embeddings(),
+            collection_name=config.CHROMA_COLLECTION,
+        )
+    except RagUnavailable:
+        raise
+    except Exception as e:  # noqa: BLE001
+        raise RagUnavailable(
+            f"Could not open Chroma store: {type(e).__name__}: {e}"
+        ) from e
 
 
 @lru_cache(maxsize=1)
@@ -85,7 +99,6 @@ def _reranker():
 
 def _dense_candidates(query: str) -> list[tuple[Document, float]]:
     store = get_vector_store()
-    # relevance scores are normalized to ~[0,1] for cosine/normalized embeddings.
     return store.similarity_search_with_relevance_scores(
         query, k=config.RETRIEVAL_CANDIDATE_K
     )
@@ -99,7 +112,6 @@ def _bm25_candidates(query: str) -> list[Document]:
 
 
 def _doc_key(doc: Document) -> tuple:
-    # Full-content hash, not an 80-char prefix — RBI chunks share boilerplate headers.
     import hashlib
 
     digest = hashlib.md5(doc.page_content.encode("utf-8")).hexdigest()
@@ -107,7 +119,6 @@ def _doc_key(doc: Document) -> tuple:
 
 
 def _fuse(dense: list[Document], sparse: list[Document], k: int = 60) -> list[Document]:
-    """Reciprocal-rank fusion of two ranked lists."""
     scores: dict[tuple, float] = {}
     keep: dict[tuple, Document] = {}
     for ranked in (dense, sparse):
@@ -126,12 +137,31 @@ def _sigmoid(x: float) -> float:
 
 
 def retrieve(query: str) -> list[RetrievedChunk]:
-    """Return the top-K grounded chunks above threshold (possibly empty)."""
-    dense_scored = _dense_candidates(query)
+    """Return the top-K grounded chunks above threshold (possibly empty).
+
+    Raises ``RagUnavailable`` when embeddings/Chroma cannot load — never an
+    opaque ImportError. Callers (RBI agent) must catch and refuse honestly.
+    """
+    ok, reason = embeddings_ready()
+    if not ok:
+        raise RagUnavailable(reason)
+
+    try:
+        dense_scored = _dense_candidates(query)
+    except RagUnavailable:
+        raise
+    except Exception as e:  # noqa: BLE001
+        raise RagUnavailable(
+            f"Dense retrieval failed: {type(e).__name__}: {e}"
+        ) from e
+
     dense_docs = [d for d, _ in dense_scored]
 
     if config.HYBRID_ENABLED:
-        candidates = _fuse(dense_docs, _bm25_candidates(query))
+        try:
+            candidates = _fuse(dense_docs, _bm25_candidates(query))
+        except Exception:  # noqa: BLE001 — BM25 is optional enrichment
+            candidates = dense_docs
     else:
         candidates = dense_docs
 
@@ -139,15 +169,21 @@ def retrieve(query: str) -> list[RetrievedChunk]:
         return []
 
     if config.RERANK_ENABLED:
-        ce = _reranker()
-        pairs = [(query, d.page_content) for d in candidates]
-        raw_scores = ce.predict(pairs)
-        scored = [
-            RetrievedChunk(doc, _sigmoid(float(s)))
-            for doc, s in zip(candidates, raw_scores)
-        ]
+        try:
+            ce = _reranker()
+            pairs = [(query, d.page_content) for d in candidates]
+            raw_scores = ce.predict(pairs)
+            scored = [
+                RetrievedChunk(doc, _sigmoid(float(s)))
+                for doc, s in zip(candidates, raw_scores)
+            ]
+        except Exception:  # noqa: BLE001 — fall back to dense scores
+            dense_map = {_doc_key(d): s for d, s in dense_scored}
+            scored = [
+                RetrievedChunk(doc, float(dense_map.get(_doc_key(doc), 0.0)))
+                for doc in candidates
+            ]
     else:
-        # Fall back to dense relevance scores.
         dense_map = {_doc_key(d): s for d, s in dense_scored}
         scored = [
             RetrievedChunk(doc, float(dense_map.get(_doc_key(doc), 0.0)))

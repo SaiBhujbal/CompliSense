@@ -1,0 +1,434 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gap Finder · CompliSense</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=4" />
+<style>
+.gf{max-width:1080px;margin:0 auto;padding:0 20px}
+.gf .eyebrow{font-family:'Space Grotesk';font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--teal)}
+.gf h1{font-family:'Space Grotesk';font-weight:700;font-size:clamp(26px,4vw,42px);line-height:1.1;margin:10px 0 12px}
+.gf .lede{font-size:15px;color:var(--muted);line-height:1.65;max-width:720px}
+.gfbanner{display:flex;gap:10px;align-items:flex-start;margin:18px 0 0;padding:11px 14px;border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.06);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.55}
+.gfbanner b{color:#d9a441}
+/* sector selector */
+.gfsel{display:flex;flex-wrap:wrap;gap:9px;margin:24px 0 4px}
+.gs{cursor:pointer;border:1px solid var(--stroke);border-radius:14px;padding:9px 14px;background:var(--panel);transition:.2s;min-width:118px}
+.gs .gsl{font-family:'Space Grotesk';font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.gs .gsn{font-size:12.5px;font-weight:600;margin-top:3px;color:var(--muted)}
+.gs:hover{border-color:var(--stroke2);transform:translateY(-1px)}
+.gs.active{border-color:var(--teal);box-shadow:0 0 22px -10px rgba(76,195,182,.6)}
+.gs.active .gsl{color:var(--teal)} .gs.active .gsn{color:var(--text)}
+.gffree{display:flex;gap:8px;margin:12px 0 4px;max-width:560px}
+.gffree input{flex:1;min-width:0;background:rgba(255,255,255,.04);border:1px solid var(--stroke);border-radius:12px;padding:10px 13px;color:var(--text);font-size:13px;font-family:inherit;outline:none}
+.gffree input:focus{border-color:var(--teal)}
+.gffree button{background:var(--teal);color:#06231a;border:none;border-radius:12px;padding:0 16px;font-weight:700;cursor:pointer;font-family:'Space Grotesk';font-size:12px;white-space:nowrap}
+.gffree .fnote{align-self:center;font-size:10.5px;color:var(--faint)}
+/* target bar */
+.gftarget{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 8px;padding:14px 16px;background:var(--panel);border:1px solid var(--stroke);border-radius:14px}
+.gftarget .tt{font-family:'Space Grotesk';font-size:15px;font-weight:500}
+.gftarget .tsub{font-size:12px;color:var(--faint)}
+.gftarget .tchip{font-size:11px;font-family:'Space Grotesk';border:1px solid var(--stroke);border-radius:16px;padding:4px 10px;color:var(--muted)}
+.gftarget .tchip.est{border-color:rgba(217,164,65,.4);color:#d9a441}
+/* wall + crack */
+.wallwrap{position:relative;margin:22px 0;border-radius:16px;overflow:hidden;border:1px solid var(--stroke);
+  background:linear-gradient(180deg,#12161f,#0c0f15)}
+.wallwrap .wtag{position:absolute;top:14px;left:16px;font-family:'Space Grotesk';font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);z-index:2}
+.wallgrid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:0;padding:38px 24px 30px}
+.wallside{padding:8px 20px}
+.wallside h4{font-family:'Space Grotesk';font-size:12px;letter-spacing:.06em;color:var(--muted);margin-bottom:12px}
+.wallside.left h4{color:var(--sage)} .wallside.right h4{color:#d9a441}
+.wtagline{display:flex;flex-wrap:wrap;gap:7px}
+.wtagline .wt{font-size:12px;padding:6px 11px;border-radius:10px;border:1px solid var(--stroke);background:rgba(255,255,255,.02)}
+.wallside.left .wt{border-left:2px solid var(--sage)}
+.wallside.right .wt{border-left:2px solid #d9a441}
+.crack{position:relative;align-self:stretch;width:60px;min-height:210px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.crack .cracksvg{position:absolute;inset:-10px 0;width:100%;height:calc(100% + 20px);overflow:visible;transition:filter .3s}
+.crackpulse{animation:crackflow 3.2s linear infinite}
+@keyframes crackflow{from{stroke-dashoffset:400}to{stroke-dashoffset:0}}
+.crackmain{animation:crackflick 4s ease-in-out infinite}
+@keyframes crackflick{0%,100%{opacity:.92}45%{opacity:.68}47%{opacity:1}}
+.crack .cracklabel{position:relative;z-index:2;writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Space Grotesk';font-size:8.5px;
+  letter-spacing:.26em;text-transform:uppercase;color:#f0c04a;background:#0c0f15;border:1px solid rgba(240,192,74,.3);padding:9px 3px;border-radius:5px}
+.crack:hover .cracksvg{filter:drop-shadow(0 0 9px rgba(240,192,74,.55))}
+.crack:hover .crackpulse{animation-duration:1.3s}
+@media(max-width:720px){.wallgrid{grid-template-columns:1fr}.crack{width:100%;min-height:0;height:64px;margin:8px 0;transform:rotate(90deg)}}
+/* section */
+.gfsec{margin:30px 0}
+.gfsec > h3{font-family:'Space Grotesk';font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+/* weakness cards */
+.wk{border:1px solid var(--stroke);border-radius:14px;padding:15px 17px;margin-bottom:12px;background:var(--panel);border-left:3px solid var(--stroke);transition:.2s}
+.wk:hover{transform:translateY(-1px)}
+.wk.fixable{border-left-color:var(--teal)} .wk.tradeoff{border-left-color:#d9a441} .wk.minority{border-left-color:rgba(255,255,255,.28)}
+.wk .wkhead{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.wk .wkt{font-family:'Space Grotesk';font-size:15px;font-weight:500}
+.wkclass{font-family:'Space Grotesk';font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-weight:700}
+.wkclass.fixable{background:rgba(76,195,182,.16);color:var(--teal)}
+.wkclass.tradeoff{background:rgba(217,164,65,.16);color:#d9a441}
+.wkclass.minority{background:rgba(255,255,255,.08);color:var(--muted)}
+.wk .wkq{margin-left:auto;font-family:'Space Grotesk';font-size:12px;color:var(--muted)}
+.wk .wkq .est{color:#d9a441}
+.wk p{font-size:13.5px;color:var(--muted);line-height:1.6;margin-top:9px}
+.wk .wkmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.ptag{font-size:10px;font-family:'Space Grotesk';letter-spacing:.04em;padding:2px 8px;border-radius:14px;position:relative;padding-left:18px}
+.ptag::before{content:'';position:absolute;left:7px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%}
+.ptag.src{background:rgba(123,191,143,.1);color:var(--sage)} .ptag.src::before{background:var(--sage)}
+.ptag.estt{background:rgba(217,164,65,.1);color:#d9a441} .ptag.estt::before{background:#d9a441}
+.cit{display:inline-block;font-size:10px;font-family:'Space Grotesk';font-weight:700;padding:1px 6px;margin:0 1px;border-radius:6px;background:var(--sage);color:#06231a;text-decoration:none;vertical-align:middle}
+a.cit:hover{filter:brightness(1.12)}
+/* wedge panel */
+.wedge{border:1px solid rgba(76,195,182,.4);border-radius:18px;padding:22px 22px 20px;background:radial-gradient(120% 120% at 0% 0%,rgba(76,195,182,.08),transparent 60%),var(--panel);position:relative;overflow:hidden}
+.wedge::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),transparent)}
+.wedge .wgeye{font-family:'Space Grotesk';font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal)}
+.wedge h2{font-family:'Space Grotesk';font-size:22px;margin:6px 0 4px}
+.wedge .wgsub{font-size:13px;color:var(--muted);line-height:1.6}
+.wgtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+@media(max-width:640px){.wgtiles{grid-template-columns:1fr}}
+.wgtile{border:1px solid var(--stroke);border-radius:12px;padding:13px 14px;background:rgba(255,255,255,.02)}
+.wgtile .wgl{font-size:10px;font-family:'Space Grotesk';letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.wgtile .wgv{font-size:16px;font-weight:600;margin:6px 0 3px}
+.wgtile .wgn{font-size:11px;color:var(--muted);line-height:1.5}
+.wgmove{border-top:1px solid var(--stroke);margin-top:6px;padding-top:16px}
+.wgmove .ml{font-size:11px;font-family:'Space Grotesk';letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.wgline{font-family:'Space Grotesk';font-size:19px;line-height:1.35;color:var(--text);border-left:3px solid var(--teal);padding-left:14px;margin:12px 0}
+.gfsrc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.gfsrc a{font-size:11px;font-family:'Space Grotesk';color:var(--teal);border:1px solid var(--stroke);border-radius:16px;padding:5px 11px;text-decoration:none;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* zoom-into-the-crack */
+.gfstage{position:relative}
+#gfwall{transition:transform .55s cubic-bezier(.55,0,.3,1),opacity .5s;transform-origin:center}
+.gfstage.zooming #gfwall{transform:scale(1.9);opacity:0}
+.gfstage.open #gfwall,.gfstage.open .crackcta{display:none}
+.crack{cursor:pointer}
+.crackcta{display:flex;justify-content:center;margin:2px 0 4px}
+.crackcta button{background:rgba(217,164,65,.14);border:1px solid #d9a441;color:#d9a441;font-family:'Space Grotesk';font-size:12.5px;
+  border-radius:18px;padding:8px 17px;cursor:pointer;transition:.2s;animation:crackpulse 2.2s ease-in-out infinite}
+.crackcta button:hover{background:rgba(217,164,65,.26);transform:translateY(-1px)}
+@keyframes crackpulse{0%,100%{box-shadow:0 0 0 0 rgba(217,164,65,.4)}50%{box-shadow:0 0 0 7px rgba(217,164,65,0)}}
+.gfinside{display:none;opacity:0;transform:scale(.93);transition:opacity .5s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.gfinside.shown{opacity:1;transform:none}
+.gfback{background:transparent;border:1px solid var(--stroke);color:var(--muted);font-family:'Space Grotesk';font-size:12px;
+  border-radius:16px;padding:7px 14px;cursor:pointer;margin-bottom:16px;transition:.18s}
+.gfback:hover{color:var(--text);border-color:var(--teal)}
+.gfdisc{margin:26px 0 60px;font-size:11.5px;color:var(--faint);line-height:1.7;text-align:center}
+</style></head>
+<body data-page="gapfinder">
+<main style="padding-top:96px">
+<div class="gf">
+  <div class="eyebrow">Gap Finder · every sector</div>
+  <h1>Where the leader is weak — and how you take the share.</h1>
+  <p class="lede">Pick a sector, pick the incumbent. We mine their public reviews, quantify the recurring complaints, separate the <b>real openings</b> from the mirages that only <i>look</i> like weaknesses, and finance-gate the one actually worth attacking.</p>
+  <div class="gfbanner"><span>⚠</span><span><b>Grounded demo.</b> Every strength &amp; weakness theme below is cited to real public reviews of a real product. Numbers are <b>sourced when a public figure exists</b> (green) and <b>flagged as estimates</b> (amber) when it doesn't — Phase 2 computes shares from live review mining. Verify before publishing anything that names a brand.</span></div>
+
+  <div class="gfsel" id="gfsel"></div>
+  <div class="gffree">
+    <input id="gfq" placeholder="Any other competitor — e.g. 'Mamaearth face wash' or 'Razorpay'" aria-label="Analyse any competitor" />
+    <button id="gfgo">Run live analysis</button>
+  </div>
+  <div class="fnote" style="font-size:10.5px;color:var(--faint)">Free input runs the live multi-agent pipeline — the answer is graded by the provenance lens, and thin data shows as estimates, never invented.</div>
+
+  <div id="gfroot"></div>
+  <div class="gfdisc" id="gfdisc"></div>
+</div>
+</main>
+<script>
+/* ---- Grounded multi-sector datasets (contract: research/GAP_FINDER_SPEC.md §4) ----
+   Every theme cites a real published review source. est:true = share/figure is an
+   illustrative estimate (no public number); est:false = the figure itself is sourced. */
+const GAPSETS = {
+ boat:{
+  sector:"Consumer electronics", competitor:"boAt Airdopes 141", segment:"sub-₹1500 true-wireless earbuds · India",
+  rating:"≈4.0★ Amazon (est.)", corpora:"Amazon · Flipkart · review press",
+  strengths:[
+    {t:"~40h total battery + fast charge", s:"S1"},
+    {t:"Deep, bass-forward sound for the price", s:"S1"},
+    {t:"Aggressive price / value", s:"S4"},
+    {t:"Solid, non-flimsy case", s:"S1"},
+  ],
+  weaknesses:[
+    {theme:"Call / mic quality", cls:"fixable", share:"recurring in cons", trend:"persistent across models",
+     text:"Reviewers rate music great but call quality only “decent”; ENx noise-cancellation lags higher-end ANC. A clear, attackable gap — keep the bass and battery buyers love and out-engineer the mic.",
+     srcs:["S1","S3"], est:true},
+    {theme:"Durability / one-side failure", cls:"fixable", share:"repeated Amazon reports", trend:"early-life failures",
+     text:"“One side stopped working after a week,” with warranty-claim friction. Emotionally powerful wedge — but hard to *prove* in marketing, so it must be backed by a warranty/QC promise, not a slogan.",
+     srcs:["S2","S5"], est:true},
+    {theme:"Connectivity after extended use", cls:"fixable", share:"some users",
+     text:"Inconsistent touch controls and occasional drops after prolonged use — a firmware/chipset issue a rival can beat, but many buyers don't hit it. Real, lower priority.",
+     srcs:["S2"], est:true},
+    {theme:"After-sales support", cls:"fixable", share:"low-rating theme",
+     text:"Support is a frequent 1-star theme (poor resolution). A genuine positioning opening — but it's an ops promise you must fund, not just claim.",
+     srcs:["S6"], est:true},
+    {theme:"Not audiophile-grade ANC", cls:"tradeoff", share:"expected at price",
+     text:"“ANC doesn't match higher-end earbuds.” This is the *price* talking, not a defect — matching flagship ANC breaks the sub-₹1500 economics buyers came for. A mirage: don't attack it.",
+     srcs:["S3"], est:false},
+  ],
+  wedge:{theme:"Call quality",
+    sub:"Keep everything buyers already love — the bass and the ~40-hour battery — and win on the one thing the leader can't be bothered to fix at this price.",
+    market:{v:"Large & vocal", n:"Call quality is a top recurring complaint across models — a broad dissatisfied segment. (segment size est.)"},
+    fixcost:{v:"+₹ modest BOM", n:"A better mic array + tuned ENx adds bill-of-materials cost. (est. — confirm with a supplier quote.)"},
+    copyback:{v:"Medium", n:"boAt can add a better mic, but it lifts BOM in a price-war tier and dilutes their bass-first brand — so they've repeatedly chosen not to."},
+    move:"Match the 40h battery and bass; redirect the saved marketing spend into a genuinely better mic + call-side ENx; then lead every ad with call quality in the sub-₹2000 tier.",
+    line:"“The bass and 40-hour battery you love — with calls you're not embarrassed to take.”",
+    srcs:["S1","S3"]},
+  sources:[
+    {id:"S1",title:"boAt Airdopes 141 Review — battery, bass, call quality",ref:"https://balajireview.com/boat-airdopes-141-review-long-battery-low-latency-and-deep-bass"},
+    {id:"S2",title:"boAt Airdopes 141 Review — everyday use, cons",ref:"https://weobserved.com/boat-airdopes-141-review.html"},
+    {id:"S3",title:"boAt Airdopes 141 Pro Review — features & sound",ref:"https://www.mrtechish.com/boat-airdopes-141-pro-review/"},
+    {id:"S4",title:"boAt Airdopes 141 Reviews — value for money",ref:"https://thesmartprix.in/boat-airdopes-141-reviews/"},
+    {id:"S5",title:"boAt Airdopes 141 — customer feedback analysis",ref:"https://kimola.com/reports/boat-airdopes-141-in-depth-customer-feedback-analysis-amazon-en-in-141923"},
+    {id:"S6",title:"boAt — customer service reviews (Trustpilot)",ref:"https://www.trustpilot.com/review/www.boat-lifestyle.com"},
+  ]},
+
+ himalaya:{
+  sector:"Beauty / personal care", competitor:"Himalaya Purifying Neem Face Wash", segment:"mass-market facial cleanser · India",
+  rating:"top-selling cleanser (rank est.)", corpora:"Nykaa · MakeupAlley · iHerb · reader panels",
+  strengths:[
+    {t:"Cleans oil & dirt well; helps whiteheads/blackheads", s:"H1"},
+    {t:"Natural positioning, very affordable", s:"H2"},
+    {t:"Loved by oily / acne-prone skin", s:"H4"},
+  ],
+  weaknesses:[
+    {theme:"Dryness for dry & sensitive skin", cls:"fixable", share:"common concern in reviews", trend:"consistent theme",
+     text:"“Dry patches and flaking” — the formula is tuned for oily skin, so a whole segment (dry/combination) is effectively excluded. Fixable for a challenger: a neem wash with humectants keeps the purifying claim AND the moisture. This is the classic weakness-to-wedge.",
+     srcs:["H1","H3","H4"], est:true},
+    {theme:"Breakouts on sensitive skin", cls:"minority", share:"a few reviewers",
+     text:"“Some with sensitive skin… caused breakouts.” Real but small and idiosyncratic (patch-test territory) — a vocal minority, not a wedge. Shown so you don't chase it.",
+     srcs:["H1"], est:true},
+    {theme:"Stripped feel after deep cleanse", cls:"tradeoff", share:"inherent to claim",
+     text:"Deep oil-control cleansing and a rich, moisturised after-feel pull in opposite directions — for the oily-skin core who BUY it for the squeaky-clean feel, “fixing” this risks the benefit they came for. Attack it only via the excluded dry-skin segment, not head-on.",
+     srcs:["H4"], est:false},
+  ],
+  wedge:{theme:"Moisture-safe purifying",
+    sub:"Their formula wins oily skin and abandons everyone else. Take the excluded segment: the same trusted neem-purifying promise, engineered to keep moisture.",
+    market:{v:"The excluded segment", n:"Dry/combination-skin buyers who want neem's purifying claim but bounce off the dryness. (segment size est.)"},
+    fixcost:{v:"+₹ formulation", n:"Humectant system (glycerin/HA) alongside neem raises COGS slightly at mass price points. (est. — confirm with formulator.)"},
+    copyback:{v:"Medium-high", n:"Himalaya can launch a variant SKU — but their brand equity is oil-control for oily skin; a 'moisturising neem' muddies the claim that built them. Move fast, own the claim."},
+    move:"Launch a neem cleanser with a humectant system, target dry/combination skin explicitly, and make 'no tightness' the measurable claim (TEWL/moisture-retention test in the ad).",
+    line:"“The neem clean you trust — without the tightness.”",
+    srcs:["H1","H4"]},
+  sources:[
+    {id:"H1",title:"Himalaya Neem Face Wash — MakeupAlley reviews",ref:"https://www.makeupalley.com/product/showreview.asp/ItemId=90446/Himalaya-Herbals-Purifying-Neem-Face-Wash/Unlisted-Brand/Cleansers"},
+    {id:"H2",title:"Himalaya Neem Face Wash — Nykaa reviews",ref:"https://www.nykaa.com/himalaya-purifying-neem-face-wash/reviews/19753"},
+    {id:"H3",title:"Himalaya Neem Face Wash — iHerb reviews",ref:"https://www.iherb.com/r/himalaya-purifying-neem-face-wash-normal-to-oily-skin-5-07-fl-oz-150-ml/78734"},
+    {id:"H4",title:"20-reader panel review — Daily Vanity",ref:"https://dailyvanity.sg/beauty-reviews/himalaya-purifying-neem-face-wash-readers-review/"},
+  ]},
+
+ kreditbee:{
+  sector:"Consumer fintech", competitor:"KreditBee", segment:"instant personal loans · India",
+  rating:"4.5cr+ users claimed [K1]", corpora:"Trustpilot · MouthShut · ConsumerComplaints · app stores",
+  strengths:[
+    {t:"Disbursal in ~10 min, fully online", s:"K1"},
+    {t:"Wide reach & brand recall", s:"K1"},
+    {t:"Flexible ticket sizes ₹6k–₹10L", s:"K1"},
+  ],
+  weaknesses:[
+    {theme:"Aggressive collections & call volume", cls:"fixable", share:"dominant complaint theme", trend:"sustained on complaint boards",
+     text:"Complaint boards are full of harassment-style recovery reports — message bombing, calls to references and family. This is BOTH the biggest reputational gap AND a regulatory exposure under RBI's digital-lending guidelines. A challenger with humane, compliant collections turns the leader's biggest liability into a brand.",
+     srcs:["K2","K3","K4"], est:true},
+    {theme:"Fee stack above peers", cls:"fixable", share:"processing up to 5.1% + GST [K1]",
+     text:"Processing fee up to 5.1% + GST is reported as higher than most competitors, with no waivers. Transparent, lower fee cards are a direct, provable wedge — put the full cost on one screen.",
+     srcs:["K1"], est:false},
+    {theme:"Customer support quality", cls:"fixable", share:"recurring 1★ theme",
+     text:"Poor resolution and inconsistent eligibility answers recur in low ratings. Fixable with funded support ops — an operational promise, not a slogan.",
+     srcs:["K2","K3"], est:true},
+    {theme:"High interest rates (12–28.5% p.a.)", cls:"tradeoff", share:"rate card [K1]",
+     text:"High rates ARE the price of unsecured, thin-file risk. Undercutting rates without better underwriting just buys adverse selection — the classic lender death spiral. A mirage unless your credit model is genuinely better. Don't attack head-on.",
+     srcs:["K1"], est:false},
+  ],
+  wedge:{theme:"Humane, RBI-clean recovery + transparent fees",
+    sub:"Match the 10-minute disbursal. Win on the two things their model resists fixing: recovery conduct and fee transparency — both of which regulators are actively tightening.",
+    market:{v:"Reputation-driven switchers", n:"Borrowers scarred by collections horror stories + the referral damage each incident causes. (segment size est.)"},
+    fixcost:{v:"Collections ops + credit losses", n:"Humane recovery costs more per rupee recovered unless underwriting is tighter — this wedge is REAL only with a better credit model. (est.)"},
+    copyback:{v:"Low-medium", n:"Reforming collections raises their credit losses at current underwriting; their unit economics resist it. But RBI pressure may force the whole market up — the wedge has a time window."},
+    move:"Publish a one-screen total-cost card, contractually cap collection contact frequency, and make 'no calls to your family — ever' the audited, advertised promise.",
+    line:"“10-minute loans. Zero calls to your family. Every rupee of cost on one screen.”",
+    srcs:["K1","K4"]},
+  sources:[
+    {id:"K1",title:"KreditBee review — rates, fees, features (FinParrot)",ref:"https://finparrot.in/kreditbee-loan-app-review-features-eligibility-hidden-charges-more/"},
+    {id:"K2",title:"KreditBee — Trustpilot reviews",ref:"https://www.trustpilot.com/review/www.kreditbee.in"},
+    {id:"K3",title:"KreditBee — MouthShut reviews",ref:"https://www.mouthshut.com/product-reviews/kreditbee-reviews-925942184"},
+    {id:"K4",title:"KreditBee — ConsumerComplaints board",ref:"https://www.consumercomplaints.in/kreditbee-b115901"},
+    {id:"K5",title:"KreditBee safety review — MoneyScore",ref:"https://moneyscore.in/blog/is-kreditbee-loan-app-safe-review"},
+  ]},
+
+ yogabar:{
+  sector:"Packaged food / FMCG", competitor:"Yoga Bar 20g Protein Bar", segment:"protein & energy bars · India",
+  rating:"Amazon best-seller tier (est.)", corpora:"Amazon.in reviews",
+  strengths:[
+    {t:"20g protein, no added sugar, clean label", s:"Y1"},
+    {t:"Flavour variety, not overly sweet", s:"Y1"},
+    {t:"Good value vs imported bars", s:"Y2"},
+  ],
+  weaknesses:[
+    {theme:"Hard, brick-like texture", cls:"fixable", share:"repeated complaint", trend:"consistent",
+     text:"“Very hard… almost brick-like,” “hard to chew.” Texture engineering (binders, moisture control) can crack this without giving up the 20g/no-sugar claim — genuinely hard food science, which is exactly why it's a defensible wedge if you solve it.",
+     srcs:["Y1","Y2"], est:true},
+    {theme:"Oil leakage when warm", cls:"fixable", share:"several reports",
+     text:"Cocoa/nut butter releases oil in Indian heat — messy to eat, feels defective. Fixable via fat-system reformulation or packaging; a challenger that survives a Delhi summer wins shelf trust.",
+     srcs:["Y1"], est:true},
+    {theme:"Stomach discomfort / bloating", cls:"minority", share:"sensitive-stomach subset",
+     text:"Reported mainly by users with sensitive stomachs — whey + 10g fibre does that to a subset. Real, but idiosyncratic; label guidance beats reformulation. Not a wedge.",
+     srcs:["Y2"], est:true},
+    {theme:"Tastes 'healthy', polarising", cls:"tradeoff", share:"mixed reviews",
+     text:"No-added-sugar bars will never taste like candy — sweetening it up betrays the exact clean-label buyer who chose it. A mirage: don't chase candy-taste.",
+     srcs:["Y1"], est:false},
+  ],
+  wedge:{theme:"Soft-bite, heat-proof protein",
+    sub:"Keep the 20g and the clean label. Win on the physical experience — the bite and the summer-proof bar.",
+    market:{v:"Repeat-purchase defectors", n:"Buyers who loved the macros but churned on texture/mess — visible in 'won't buy again' reviews. (segment size est.)"},
+    fixcost:{v:"+₹ R&D + ingredients", n:"Soft-texture binders & heat-stable fat systems raise COGS; real food-science work. (est. — pilot batch first.)"},
+    copyback:{v:"Medium", n:"Reformulation is possible for them too — but soft + 20g + no-added-sugar + no preservatives is genuinely hard; first to solve it owns the claim."},
+    move:"Solve texture first (soft-bite at 20g protein), prove heat-stability on camera (the '40°C car test'), and target the churned repeat-buyers of the incumbent.",
+    line:"“20 grams of protein that doesn't fight back.”",
+    srcs:["Y1","Y2"]},
+  sources:[
+    {id:"Y1",title:"Yogabar 20g Protein Bar — Amazon.in reviews (variety pack)",ref:"https://www.amazon.in/Yogabar-Power-Protein-Variety-Added/dp/B0F1MVBLJX"},
+    {id:"Y2",title:"Yogabar Protein Bars — Amazon.in reviews (10-pack)",ref:"https://www.amazon.in/Yogabar-Variety-Box-Protein-360g-Pack/dp/B07DVDZ29Q"},
+  ]},
+
+ zoho:{
+  sector:"B2B SaaS", competitor:"Zoho CRM", segment:"SMB / mid-market CRM · global",
+  rating:"2,901 G2 reviews [Z1]", corpora:"G2 · Capterra · TechRadar · trade press",
+  strengths:[
+    {t:"Price/value vs bigger CRMs", s:"Z3"},
+    {t:"Breadth: features even in mid plans", s:"Z1"},
+    {t:"Deep Zoho-ecosystem integrations", s:"Z2"},
+  ],
+  weaknesses:[
+    {theme:"Support quality below peers", cls:"fixable", share:"67 of 2,901 G2 reviews tag poor support; support score 7.6 vs HubSpot 8.5", trend:"persistent",
+     text:"This one has a real public denominator: G2's own tags and scores put Zoho's Quality of Support at 7.6/10 — below HubSpot (8.5) and Freshdesk (8.8). A challenger that funds real support wins the exact users Zoho's self-serve-scale model underserves.",
+     srcs:["Z1","Z2"], est:false},
+    {theme:"Performance on large datasets", cls:"fixable", share:"recurring in reviews",
+     text:"Slow loading, occasional bugs and reliability issues with big data, complex reports, many customisations. An engineering wedge for a rival that benchmarks speed publicly.",
+     srcs:["Z5","Z2"], est:true},
+    {theme:"Complexity / learning curve", cls:"tradeoff", share:"top recurring dislike",
+     text:"“Powerful but complex… fragmented once workflows get advanced.” The complexity IS the breadth their power users pay for — Zoho can't simplify without gutting its value. Which is precisely why a FOCUSED challenger wins the SMB segment drowning in it: attack by segmentation, not head-on.",
+     srcs:["Z1","Z4"], est:false},
+  ],
+  wedge:{theme:"Support that answers",
+    sub:"Same job-to-be-done, but staffed: win the users who chose Zoho for price and churn on support and sprawl.",
+    market:{v:"Churning SMB seats", n:"The support-dissatisfied slice is publicly visible in G2 tags — and each churned seat is recurring revenue. (revenue impact est.)"},
+    fixcost:{v:"Support headcount vs margin", n:"Real human support at SMB price points costs gross margin — viable only with focused scope, not Zoho-breadth. (est.)"},
+    copyback:{v:"Low", n:"Zoho's economics are self-serve scale across 50+ products; funding elite support for one product fights their whole operating model."},
+    move:"Ship the 20% of CRM features SMBs actually use, publish support SLAs and G2 support scores side-by-side with Zoho's, and guarantee human response times in the contract.",
+    line:"“The CRM features you actually use — with support that picks up.”",
+    srcs:["Z1","Z2"]},
+  sources:[
+    {id:"Z1",title:"Zoho CRM — G2 pros & cons (user tags)",ref:"https://www.g2.com/products/zoho-crm/reviews?qs=pros-and-cons"},
+    {id:"Z2",title:"Zoho CRM — G2 reviews & support score",ref:"https://www.g2.com/products/zoho-crm/reviews"},
+    {id:"Z3",title:"Zoho CRM review — OnePageCRM",ref:"https://www.onepagecrm.com/crm-reviews/zoho/"},
+    {id:"Z4",title:"Zoho CRM review — TechRadar",ref:"https://www.techradar.com/reviews/zoho-crm-review"},
+    {id:"Z5",title:"Zoho CRM — Capterra reviews",ref:"https://www.capterra.com/p/155928/Zoho-CRM/reviews/"},
+  ]},
+};
+
+let CUR='boat';
+try{const _cc=JSON.parse(localStorage.getItem('cs_company')||'{}');if(_cc.gfKey&&GAPSETS[_cc.gfKey])CUR=_cc.gfKey;}catch(e){}
+function renderSel(){
+  let cc={};try{cc=JSON.parse(localStorage.getItem('cs_company')||'{}')}catch(e){}
+  const locked=!!(cc.gfKey&&GAPSETS[cc.gfKey]);
+  const sel=document.getElementById('gfsel');
+  if(locked){
+    // Company set → analyse ONLY the company's sector; no other sectors offered.
+    sel.innerHTML=`<span class="cslock">Sector: <b>${GAPSETS[cc.gfKey].sector}</b>${cc.name?` · for ${cc.name}`:''}<span class="ed" onclick="window.csEditCompany&&window.csEditCompany()">change ✎</span></span>`;
+    return;
+  }
+  sel.innerHTML=Object.entries(GAPSETS).map(([k,d])=>
+    `<div class="gs ${k===CUR?'active':''}" data-k="${k}"><div class="gsl">${d.sector}</div><div class="gsn">${d.competitor}</div></div>`).join('');
+  document.querySelectorAll('.gs').forEach(el=>el.addEventListener('click',()=>{CUR=el.dataset.k;renderSel();renderSet()}));
+}
+function renderSet(){
+  const GAP=GAPSETS[CUR];
+  const idMap={}; GAP.sources.forEach(s=>idMap[s.id]=s);
+  const cite=ids=>(ids||[]).map(id=>{const s=idMap[id];return s?`<a class="cit" href="${s.ref}" target="_blank" rel="noopener" title="${s.title.replace(/"/g,'&quot;')}">${id}</a>`:'';}).join('');
+  const CLS={fixable:'Fixable gap',tradeoff:'Inherent tradeoff',minority:'Vocal minority'};
+  let h='';
+  h+=`<div class="gftarget"><span class="tt">Analysing: ${GAP.competitor}</span>
+      <span class="tsub">${GAP.segment}</span>
+      <span class="tchip est">${GAP.rating}</span>
+      <span class="tchip">corpora: ${GAP.corpora}</span></div>`;
+  h+=`<div class="gfstage" id="gfstage"><div class="wallwrap" id="gfwall"><span class="wtag">The incumbent wall — click the crack to enter</span><div class="wallgrid">
+      <div class="wallside left"><h4>Their strength — don't attack</h4><div class="wtagline">${
+        GAP.strengths.map(s=>`<span class="wt">${s.t} ${cite([s.s])}</span>`).join('')}</div></div>
+      <div class="crack" title="Click to enter the gap">
+        <svg class="cracksvg" viewBox="0 0 60 420" preserveAspectRatio="none">
+          <defs>
+            <filter id="cg" x="-60%" y="-10%" width="220%" height="120%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <linearGradient id="cgr" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#d9a441" stop-opacity="0"/><stop offset="10%" stop-color="#e8b23f"/>
+              <stop offset="50%" stop-color="#ffe08a"/><stop offset="90%" stop-color="#e8b23f"/><stop offset="1" stop-color="#d9a441" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g fill="none" vector-effect="non-scaling-stroke" filter="url(#cg)">
+            <path class="crackmain" d="M30 0 L27 46 L35 92 L24 140 L33 188 L26 236 L35 284 L27 332 L33 380 L30 420" stroke="url(#cgr)" stroke-width="2.6" stroke-linejoin="round"/>
+            <path d="M27 46 L11 66 M35 92 L52 108 M24 140 L8 164 M33 188 L50 206 M26 236 L10 260 M35 284 L53 300 M27 332 L12 356" stroke="url(#cgr)" stroke-width="1.4" opacity=".7"/>
+            <path d="M35 92 L44 80 M24 140 L16 126 M35 284 L45 272" stroke="url(#cgr)" stroke-width="1" opacity=".5"/>
+            <path class="crackpulse" d="M30 0 L27 46 L35 92 L24 140 L33 188 L26 236 L35 284 L27 332 L33 380 L30 420" stroke="#fff6da" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="22 400"/>
+          </g>
+        </svg>
+        <span class="cracklabel">enter the gap</span>
+      </div>
+      <div class="wallside right"><h4>The opening — attack here</h4><div class="wtagline">${
+        GAP.weaknesses.filter(w=>w.cls==='fixable').slice(0,3).map(w=>`<span class="wt">${w.theme}</span>`).join('')}</div></div>
+    </div></div>
+    <div class="crackcta"><button id="gfenter">⤢ Zoom into the gap</button></div>
+    <div class="gfinside" id="gfinside"><button class="gfback" id="gfback">← back to the wall</button>`;
+  h+=`<div class="gfsec"><h3>Inside the gap — cracks ranked by opening (mirages demoted)</h3>`;
+  GAP.weaknesses.forEach(w=>{
+    h+=`<div class="wk ${w.cls}"><div class="wkhead">
+        <span class="wkt">${w.theme}</span>
+        <span class="wkclass ${w.cls}">${CLS[w.cls]}</span>
+        <span class="wkq">${w.share}${w.trend?` · ${w.trend}`:''} ${w.est?'<span class="est">· est.</span>':''}</span></div>
+      <p>${w.text}</p>
+      <div class="wkmeta"><span class="ptag src">theme sourced</span>${w.est?'<span class="ptag estt">figures = estimate</span>':'<span class="ptag src">figures sourced</span>'}<span style="margin-left:4px">${cite(w.srcs)}</span></div></div>`;
+  });
+  h+=`</div>`;
+  const wg=GAP.wedge;
+  h+=`<div class="gfsec"><h3>Your wedge — finance-gated</h3><div class="wedge">
+      <div class="wgeye">Top opening</div><h2>${wg.theme}</h2><p class="wgsub">${wg.sub}</p>
+      <div class="wgtiles">
+        <div class="wgtile"><div class="wgl">Dissatisfied segment</div><div class="wgv">${wg.market.v}</div><div class="wgn">${wg.market.n}</div></div>
+        <div class="wgtile"><div class="wgl">Fix cost</div><div class="wgv">${wg.fixcost.v}</div><div class="wgn">${wg.fixcost.n}</div></div>
+        <div class="wgtile"><div class="wgl">Copy-back risk</div><div class="wgv">${wg.copyback.v}</div><div class="wgn">${wg.copyback.n}</div></div>
+      </div>
+      <div class="wgmove"><div class="ml">The move</div><p class="wgsub">${wg.move}</p>
+      <div class="wgline">${wg.line}</div>
+      <div class="gfsrc">${wg.srcs.map(id=>{const s=idMap[id];return `<a href="${s.ref}" target="_blank" rel="noopener">[${id}] ${s.title}</a>`}).join('')}</div></div>
+    </div></div></div></div>`;
+  document.getElementById('gfroot').innerHTML=h;
+  document.getElementById('gfdisc').innerHTML='Every weakness theme links to a real cited review. Amber figures are <b>estimates</b> until Phase-2 live review mining; green figures carry a public source. Informational only — verify before acting or publishing.';
+  const stage=document.getElementById('gfstage'),inside=document.getElementById('gfinside');
+  const enter=()=>{if(stage.classList.contains('open'))return;stage.classList.add('zooming');
+    setTimeout(()=>{stage.classList.add('open');inside.style.display='block';
+      setTimeout(()=>inside.classList.add('shown'),30);
+      stage.scrollIntoView({behavior:'smooth',block:'start'});},520);};
+  const exitGap=()=>{inside.classList.remove('shown');
+    setTimeout(()=>{inside.style.display='none';stage.classList.remove('zooming','open');},420);};
+  document.getElementById('gfenter').addEventListener('click',enter);
+  const crackEl=document.querySelector('#gfwall .crack');if(crackEl)crackEl.addEventListener('click',enter);
+  document.getElementById('gfback').addEventListener('click',exitGap);
+}
+function gapToSlack(){
+  const G=GAPSETS[CUR],wg=G.wedge;
+  window.csSlackModal('gap',null,[
+    {type:'header',text:{type:'plain_text',text:`◎ Gap Finder — ${G.competitor}`}},
+    {type:'section',text:{type:'mrkdwn',text:`*Top opening:* ${wg.theme}\n${wg.sub}`}},
+    {type:'section',fields:[
+      {type:'mrkdwn',text:`*Segment*\n${wg.market.v}`},{type:'mrkdwn',text:`*Fix cost*\n${wg.fixcost.v}`},
+      {type:'mrkdwn',text:`*Copy-back*\n${wg.copyback.v}`},{type:'mrkdwn',text:`*Positioning*\n${wg.line}`}]},
+    {type:'context',elements:[{type:'mrkdwn',text:'CompliSense Gap Finder · grounded in cited public reviews.'}]}]);
+}
+window.gapToSlack=gapToSlack;
+renderSel();renderSet();
+/* free input → live multi-agent run in the on-page Ask panel (engine.js) */
+document.getElementById('gfgo').addEventListener('click',freeRun);
+document.getElementById('gfq').addEventListener('keydown',e=>{if(e.key==='Enter')freeRun()});
+function freeRun(){
+  const v=document.getElementById('gfq').value.trim();if(!v)return;
+  const q=`Gap Finder: mine public customer reviews of ${v}. Cluster the recurring complaints, classify each as fixable gap / inherent tradeoff / vocal minority, give denominators where a public figure exists and flag everything else as an estimate, then give the single finance-gated wedge (dissatisfied segment, fix cost, copy-back risk) with a positioning line.`;
+  const inp=document.getElementById('csq'),panel=document.getElementById('csask'),go=document.getElementById('csgo');
+  if(inp&&panel&&go){inp.value=q;panel.classList.add('show');go.click();}
+  else location.href='agents.html?q='+encodeURIComponent(q);
+}
+</script>
+<script src="engine.js?v=4"></script>
+</body></html>

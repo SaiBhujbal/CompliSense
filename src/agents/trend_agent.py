@@ -10,14 +10,15 @@ from datetime import date
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from ..llm import get_llm
+from ..llm.structured import safe_invoke
 from ..tools import tavily_search
 
-SYSTEM_PROMPT = """You are a FinTech trend analyst. Based ONLY on the provided, dated search results:
-1. Current trends: the most significant developments happening now.
-2. Near-term outlook (next 1-2 years), grounded in the evidence — label clearly as projection.
-3. Statistical signals (growth rates, adoption) IF present in the results.
-4. Relevance to the user's goal.
-Cite every claim with its [S#] tag. Do NOT make unsupported predictions; if evidence is thin, say so."""
+SYSTEM_PROMPT = """You are a FINANCIAL trend analyst at a finance & compliance copilot. For a business in the user's sector, report the FINANCIAL trends that matter — NOT product, design or marketing fads. Based ONLY on the provided, dated search results:
+1. Capital & financing trends: how this sector is being funded (equity, debt, working-capital, MSME credit, revenue-based finance); the funding climate.
+2. Payments & checkout-finance trends: payment rails, BNPL/EMI, settlement, and what they do to cash flow and conversion.
+3. Unit-economics / margin / cost trends and pricing power in the sector.
+4. Near-term outlook (next 12-18 months) — clearly labelled as projection — and what it means for the user's goal financially.
+Include statistical signals (growth rates, margins, CAC, funding totals) IF present. Cite every claim with its [S#] tag. Do NOT make unsupported predictions; if evidence is thin, say so."""
 
 
 def trend_node(state: dict) -> dict:
@@ -25,16 +26,24 @@ def trend_node(state: dict) -> dict:
         return {}
 
     intent = state.get("analysis_intent") or state["user_query"]
+    sector = state.get("sector") or "this business"
     year = date.today().year
     try:
-        context, sources = tavily_search(f"Indian FinTech trends {year} outlook {intent}")
+        # Financial trends of the sector, not its style trends.
+        context, sources = tavily_search(
+            f"{sector} India {year}: financing and funding trends, unit economics and margins, "
+            f"working capital, pricing, customer acquisition cost, payment and BNPL trends"
+        )
     except Exception as e:  # noqa: BLE001
         return {"trend_report": f"Trend web search unavailable: {e}", "sources": {"trend": []}}
 
     llm = get_llm("reasoning")
     human = (
-        f"User's interest: {intent}\nToday's year: {year}\n\n"
-        f"Search results:\n---\n{context}\n---\n\nWrite the trend report, citing [S#] tags."
+        f"User's sector: {sector}\nFinancial brief: {intent}\nToday's year: {year}\n\n"
+        f"Search results:\n---\n{context}\n---\n\nWrite the FINANCIAL trend report, citing [S#] tags."
     )
-    resp = llm.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=human)])
-    return {"trend_report": resp.content, "sources": {"trend": sources}}
+    content = safe_invoke(
+        llm, [SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=human)],
+        fallback="Trend financial read was rate-limited this run; rely on the other reports for now.",
+    )
+    return {"trend_report": content, "sources": {"trend": sources}}

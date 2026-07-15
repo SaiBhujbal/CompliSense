@@ -1,0 +1,309 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your dashboard · CompliSense</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=3" />
+<style>
+/* ---- onboarding chat ---- */
+.ob{max-width:640px;margin:0 auto;padding:8px 0}
+.ob .qbubble{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;border-top-left-radius:4px;padding:16px 20px;margin-bottom:16px;opacity:0;transform:translateY(12px);animation:rise .5s forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.ob .qbubble .qn{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:7px}
+.ob .qbubble b{font-family:'Space Grotesk';font-weight:500;font-size:17px}
+.ob .opts{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0 4px}
+.ob .opt{cursor:pointer;border:1px solid var(--stroke2);border-radius:12px;padding:11px 15px;font-size:14px;color:var(--text);transition:.2s;background:var(--bg-soft)}
+.ob .opt:hover{border-color:var(--teal);background:rgba(76,195,182,.08)}
+.ob .opt.sel{border-color:var(--teal);background:rgba(76,195,182,.14);color:var(--teal)}
+.ob .ans{margin:0 0 16px auto;width:fit-content;max-width:80%;background:rgba(76,195,182,.12);border:1px solid rgba(76,195,182,.3);color:var(--text);border-radius:16px;border-top-right-radius:4px;padding:11px 16px;font-size:14px}
+/* ---- stock loading ---- */
+.load{max-width:680px;margin:0 auto;text-align:center}
+.load .chartbox{position:relative;height:240px;margin:10px 0 24px;border:1px solid var(--stroke);border-radius:18px;background:linear-gradient(180deg,var(--panel),var(--bg-soft));overflow:hidden}
+.ticker{position:absolute;top:0;left:0;right:0;height:30px;display:flex;align-items:center;border-bottom:1px solid var(--stroke);overflow:hidden;background:rgba(0,0,0,.2)}
+.ticker .tk{white-space:nowrap;animation:tick 16s linear infinite;font-family:'Space Grotesk';font-size:12px;color:var(--muted)}
+.ticker .tk b{color:var(--sage)}.ticker .tk .dn{color:var(--rose)}
+@keyframes tick{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.load .stat{font-family:'Space Grotesk';color:var(--text);font-size:15px;min-height:22px}
+.load .sub{color:var(--muted);font-size:13px;margin-top:6px}
+.dotbar{display:flex;gap:6px;justify-content:center;margin-top:18px}
+.dotbar i{width:8px;height:8px;border-radius:50%;background:var(--stroke2);transition:.3s}
+.dotbar i.on{background:var(--teal)}
+/* ---- dashboard ---- */
+.dwrap2{max-width:1180px;margin:0 auto}
+.dhead{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.dhead .who .lab{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal)}
+.dhead .who h2{font-size:clamp(24px,3.4vw,34px);font-weight:500}
+.dhead .who p{color:var(--muted);font-size:14px;margin-top:4px}
+.edit{cursor:pointer;font-family:'Space Grotesk';font-size:12.5px;color:var(--muted);border:1px solid var(--stroke);border-radius:9px;padding:7px 13px;transition:.2s}
+.edit:hover{color:var(--text);border-color:var(--stroke2)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 20px;border-bottom:1px solid var(--stroke);padding-bottom:0}
+.tab{cursor:pointer;font-family:'Space Grotesk';font-size:13.5px;color:var(--muted);padding:10px 14px;border-bottom:2px solid transparent;transition:.2s;margin-bottom:-1px}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--text);border-bottom-color:var(--teal)}
+.panel{display:none;animation:fade .4s}
+.panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.dcard{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--rl);padding:20px}
+.dcard h4{font-family:'Space Grotesk';font-weight:500;font-size:13px;letter-spacing:.04em;color:var(--muted);margin-bottom:12px;text-transform:uppercase}
+.statepill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-family:'Space Grotesk';padding:3px 10px;border-radius:20px;border:1px solid var(--stroke);color:var(--sp)}
+.statepill i{width:7px;height:7px;border-radius:50%;background:var(--sp)}
+.orow{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--stroke)}
+.orow:first-child{border-top:0}
+.orow .dot{width:9px;height:9px;border-radius:3px;margin-top:5px;flex-shrink:0}
+.orow .ot{font-size:13.5px}.orow .os{color:var(--faint);font-size:11px;font-family:'Space Grotesk'}
+.opendeep{display:inline-flex;gap:7px;align-items:center;margin-top:14px;color:var(--teal);font-family:'Space Grotesk';font-size:12.5px;text-decoration:none;transition:gap .2s}
+.opendeep:hover{gap:13px}
+.spark2{display:flex;align-items:flex-end;gap:4px;height:60px;margin:8px 0}
+.spark2 i{flex:1;border-radius:3px 3px 0 0;background:var(--sc)}
+.qmini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qmini .qq{border-radius:12px;padding:13px;border:1px solid var(--stroke);border-top:2px solid var(--qc);background:var(--bg-soft)}
+.qmini .qq .qh{font-family:'Space Grotesk';font-size:12px;color:var(--qc);margin-bottom:5px}
+.qmini .qq p{font-size:12.5px;color:var(--muted);line-height:1.4}
+/* live tab */
+.lpipe{display:flex;flex-direction:column;gap:8px}
+.lnode{display:flex;gap:13px;align-items:flex-start;padding:13px 15px;border:1px solid var(--stroke);border-radius:13px;background:var(--panel);opacity:.5;transition:.4s}
+.lnode .lic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:15px;flex-shrink:0;border:1px solid var(--stroke);color:var(--muted);font-family:'Space Grotesk';transition:.4s}
+.lnode b{font-family:'Space Grotesk';font-size:14px}
+.lnode .lst{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-left:8px}
+.lnode.active{opacity:1;border-color:var(--teal)}
+.lnode.active .lic{color:var(--teal);border-color:var(--teal);animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lnode.done{opacity:1;border-color:rgba(123,191,143,.4)}
+.lnode.done .lic{background:var(--sage);color:#06231a;border-color:transparent;animation:none}
+.lnode.done .lst{color:var(--sage)}
+.lnode.skipped{opacity:.35;filter:grayscale(.4)}
+.lnode.skipped .lst{color:var(--faint)}
+.lsrc{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.lsrc a,.lsrc span{font-size:10px;font-family:'Space Grotesk';color:var(--teal);border:1px solid var(--stroke);border-radius:13px;padding:2px 8px;text-decoration:none;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style></head>
+<body data-page="dashboard">
+
+<section class="wrap" style="padding-top:104px">
+  <!-- ONBOARDING -->
+  <div id="onboard">
+    <div class="eyebrow" style="text-align:center">Set up CompliSense · 30 seconds</div>
+    <h1 class="grad glow" style="text-align:center;font-size:clamp(30px,5vw,52px);margin:8px 0 28px">Tell us about your venture</h1>
+    <div class="ob" id="ob"></div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" style="display:none">
+    <div class="load">
+      <div class="eyebrow">Building your dashboard</div>
+      <h1 class="grad glow" style="font-size:clamp(26px,4vw,40px);margin:8px 0 18px">Analyzing your market</h1>
+      <div class="chartbox">
+        <div class="ticker"><div class="tk" id="tk"></div></div>
+        <svg viewBox="0 0 680 210" preserveAspectRatio="none" style="position:absolute;inset:30px 0 0 0;width:100%;height:calc(100% - 30px)">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(76,195,182,.35)"/><stop offset="1" stop-color="rgba(76,195,182,0)"/></linearGradient></defs>
+          <g id="candles"></g>
+          <path id="lpath" fill="none" stroke="#4cc3b6" stroke-width="2.5"/>
+          <path id="lfill" fill="url(#lg)" opacity="0"/>
+        </svg>
+      </div>
+      <div class="stat" id="lstat">Scanning RBI directions…</div>
+      <div class="sub" id="lsub">grounding every signal in a primary source</div>
+      <div class="dotbar" id="dots"></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" style="display:none">
+    <div class="dwrap2">
+      <div class="dhead">
+        <div class="who"><div class="lab">Your CompliSense</div><h2 id="dwho">—</h2><p id="dgoal">—</p></div>
+        <div style="display:flex;gap:24px;align-items:center">
+          <div class="ring" data-val="0" id="dring" style="width:120px;height:120px"><svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(120,160,255,.12)" stroke-width="9"/>
+            <circle class="val" cx="60" cy="60" r="50" fill="none" stroke="url(#rg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
+            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4cc3b6"/><stop offset="1" stop-color="#8089e8"/></linearGradient></defs>
+          </svg><div class="pct" style="font-size:0"><b id="dpct" style="font-family:'Space Grotesk';font-size:30px;position:absolute;inset:0;display:grid;place-items:center">0</b></div></div>
+          <span class="edit" onclick="resetProfile()">↻ edit profile</span>
+        </div>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div id="panels"></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Tailored to the profile you selected; verify against the cited primary source.</p><div>CompliSense · sector dashboard</div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="engine.js?v=3"></script>
+<script>
+const RED='#e0697f',BLUE='#5aa0ef',GREEN='#57c98a',YEL='#e0c451',AMB='#dca150',TEAL='#4cc3b6';
+/* ---- sector profiles ---- */
+const PROFILES={
+ lending:{label:'Digital-lending NBFC',readiness:78,
+   compliance:[['NOF ₹10 cr by Mar 2027',RED,'SBR 2023'],['DLG capped at 5% of portfolio',AMB,'Digital Lending 2025'],['Direct disbursal · no LSP pass-through',GREEN,'Digital Lending 2025'],['KYC/AML · STR in 7 days',AMB,'KYC MD 2016']],
+   pestel:[['Legal','Tightening',RED],['Technological','Accelerating',GREEN],['Economic','Recovering',BLUE]],
+   swot:{S:'Citation-grounded RBI answers',W:'NOF below the 2027 floor',O:'Co-lending with banks',T:'Tightening DLG / pass-through rules'},
+   trend:{head:'Co-lending + AA-powered thin-file underwriting',traj:[34,52,61,70,84,97],state:'Accelerating',sc:GREEN,pts:['Co-lending volumes rising as banks seek origination','AA consent flows cut onboarding cost','RBI disclosure load increases per loan']},
+   market:{gap:'thin-file MSME credit, compliance-grounded',blk:'KreditBee/Cred over-serve premium & consumer; the MSME thin-file seam is open'}},
+ pa:{label:'Payment Aggregator',readiness:64,
+   compliance:[['Net worth ₹15 cr → ₹25 cr by Mar 2028',RED,'PA Directions 2025'],['Merchant due diligence & KYC',AMB,'PA 2025'],['Settlement & escrow rules',AMB,'PA 2025'],['Fraud & data-localisation reporting',GREEN,'PA 2025']],
+   pestel:[['Legal','Tightening',RED],['Technological','Accelerating',GREEN],['Social','Steady',YEL]],
+   swot:{S:'Settlement rails + merchant network',W:'Net-worth glide-path gap',O:'Value-added merchant services',T:'Margin compression on MDR'},
+   trend:{head:'Tokenisation, recurring mandates & cross-border PA',traj:[40,55,60,72,83,95],state:'Growing',sc:GREEN,pts:['Tokenised card-on-file now table stakes','e-mandate / recurring volumes climbing','Cross-border PA-CB norms opening up']},
+   market:{gap:'compliance-first PA for regulated merchants',blk:'Cred/Razorpay scale on UX; the compliance-heavy regulated-merchant seam is open'}},
+ neobank:{label:'Neobank / Account-Aggregator (TSP)',readiness:71,
+   compliance:[['Bank-partner / BaaS guardrails',AMB,'RBI outsourcing'],['Consent-based data sharing (AA)',GREEN,'Account Aggregator MD'],['DPDP data-protection duties',AMB,'DPDP 2023'],['No deposit-taking without licence',RED,'RBI']],
+   pestel:[['Technological','Accelerating',GREEN],['Legal','Tightening',RED],['Social','Steady',YEL]],
+   swot:{S:'AA-native data model',W:'Dependence on partner bank',O:'Consent-driven cross-sell',T:'Regulatory limits on neobank model'},
+   trend:{head:'AA-led PFM, embedded finance & consent analytics',traj:[30,44,58,69,80,92],state:'Emerging',sc:TEAL,pts:['AA account linkages scaling fast','Embedded credit via partners','Consent-analytics as a product']},
+   market:{gap:'consent-first SME financial control',blk:'Super-apps own consumers; the consent-first SME seam is thin'}},
+ other:{label:'FinTech (general)',readiness:68,
+   compliance:[['Identify your RBI licence path',AMB,'SBR 2023'],['KYC/AML framework',AMB,'KYC MD 2016'],['Data localisation & DPDP',GREEN,'DPDP 2023'],['Change-of-control approvals',RED,'SBR 2023']],
+   pestel:[['Legal','Tightening',RED],['Technological','Accelerating',GREEN],['Economic','Recovering',BLUE]],
+   swot:{S:'Grounded compliance copilot',W:'Undefined licence path',O:'Underserved India FinTech TAM',T:'Fast-moving RBI rules'},
+   trend:{head:'AI underwriting, AA rails & embedded finance',traj:[34,48,60,70,82,94],state:'Growing',sc:GREEN,pts:['AA + AI reshape the stack','Embedded finance expands distribution','Compliance becomes a product']},
+   market:{gap:'grounded, cited compliance as a wedge',blk:'Incumbents treat compliance as cost; grounded-compliance depth is open'}},
+};
+const SECTOR_MAP={'Digital-lending NBFC':'lending','Payment Aggregator':'pa','Neobank / AA (TSP)':'neobank','WealthTech / other':'other'};
+
+/* ---- onboarding ---- */
+const QS=[
+ ['Sector','What kind of FinTech are you building?',['Digital-lending NBFC','Payment Aggregator','Neobank / AA (TSP)','WealthTech / other']],
+ ['Stage','What stage are you at?',['Pre-licence','Seed–Series A','Series B+','Growth / profitable']],
+ ['Goal','What matters most right now?',['Get licensed','Raise capital','Launch / expand product','Stay compliant']],
+];
+let answers={},step=0;
+function renderQ(){const ob=document.getElementById('ob');
+  // render answered as bubbles + current question
+  let html='';
+  QS.forEach((q,i)=>{if(i<step){html+=`<div class="ans">${answers[q[0]]}</div>`}});
+  if(step<QS.length){const q=QS[step];
+    html+=`<div class="qbubble"><div class="qn">Question ${step+1} of ${QS.length} · ${q[0]}</div><b>${q[1]}</b><div class="opts">${q[2].map(o=>`<span class="opt" onclick="pick('${q[0]}','${o.replace(/'/g,"\\'")}')">${o}</span>`).join('')}</div></div>`;}
+  ob.innerHTML=html;ob.scrollIntoView({block:'center',behavior:'smooth'});
+}
+function pick(key,val){answers[key]=val;step++;
+  if(step<QS.length){renderQ()}else{renderQ();setTimeout(startLoading,420)}}
+
+/* ---- loading animation ---- */
+const STATUS=[['Scanning RBI directions…','matching the rules that apply to you'],
+ ['Mapping the competitive wall…','finding the crack you can take'],
+ ['Scoring the macro forces…','PESTEL, grounded in dated sources'],
+ ['Reading the market trajectory…','signal over noise, 12–18 months out'],
+ ['Synthesizing your dashboard…','every claim traceable to a source']];
+function startLoading(){
+  document.getElementById('onboard').style.display='none';
+  const ld=document.getElementById('loading');ld.style.display='block';ld.scrollIntoView({block:'center'});
+  // ticker
+  const tks=['NIFTY FIN ▲','UPI vol ▲','RBI repo •','FINTECH IDX ▲','MSME credit ▲','AA links ▲','PA settl ▼','NBFC NIM •'];
+  document.getElementById('tk').innerHTML=tks.map(t=>{const dn=t.includes('▼');return `<b class="${dn?'dn':''}" style="margin:0 22px">${t} ${(Math.random()*4+0.2).toFixed(2)}%</b>`}).join('');
+  // candlesticks + line
+  const cs=document.getElementById('candles');let pts=[],x=10,y=150;
+  let html='';for(let i=0;i<22;i++){const o=y;y+=(Math.random()-0.52)*26;y=Math.max(30,Math.min(180,y));const cx=10+i*30;
+    const up=y<o;const col=up?'#57c98a':'#e0697f';const h=Math.abs(y-o)+6;const top=Math.min(o,y)-3;
+    html+=`<rect x="${cx-4}" y="${top}" width="8" height="${h}" fill="${col}" opacity="0" rx="1"><animate attributeName="opacity" from="0" to="0.8" begin="${i*0.06}s" dur="0.3s" fill="freeze"/></rect>`;
+    pts.push([cx,y]);}
+  cs.innerHTML=html;
+  const d='M'+pts.map(p=>p[0]+','+p[1]).join(' L');
+  const lp=document.getElementById('lpath');lp.setAttribute('d',d);
+  const len=lp.getTotalLength();lp.style.strokeDasharray=len;lp.style.strokeDashoffset=len;
+  lp.style.transition='stroke-dashoffset 3s ease';requestAnimationFrame(()=>lp.style.strokeDashoffset=0);
+  const lf=document.getElementById('lfill');lf.setAttribute('d',d+` L${pts[pts.length-1][0]},210 L${pts[0][0]},210 Z`);
+  setTimeout(()=>{lf.style.transition='opacity 1s';lf.style.opacity=1},1400);
+  // dots + status cycle
+  document.getElementById('dots').innerHTML=STATUS.map(()=>'<i></i>').join('');
+  const dots=[...document.querySelectorAll('#dots i')];let s=0;
+  function step(){if(s<STATUS.length){document.getElementById('lstat').textContent=STATUS[s][0];
+    document.getElementById('lsub').textContent=STATUS[s][1];dots[s].classList.add('on');s++;setTimeout(step,760)}
+    else{setTimeout(showDash,500)}}
+  step();
+}
+
+/* ---- dashboard ---- */
+function profile(){const key=SECTOR_MAP[answers['Sector']]||'other';return Object.assign({key,stage:answers['Stage'],goal:answers['Goal']},PROFILES[key]);}
+function showDash(){
+  document.getElementById('loading').style.display='none';
+  const dash=document.getElementById('dash');dash.style.display='block';
+  const p=profile();
+  document.getElementById('dwho').textContent=`${p.label} · ${p.stage||''}`;
+  document.getElementById('dgoal').textContent=`Primary goal: ${p.goal||'—'} — here's your tailored read.`;
+  buildTabs(p);
+  // ring
+  setTimeout(()=>{const c=document.querySelector('#dring circle.val');c.style.transition='stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)';
+    c.style.strokeDashoffset=314*(1-p.readiness/100);
+    let n=0;const iv=setInterval(()=>{n+=2;if(n>=p.readiness){n=p.readiness;clearInterval(iv)}document.getElementById('dpct').textContent=n},26);},200);
+  dash.scrollIntoView({block:'start'});
+}
+const TABS=['Overview','Compliance','PESTEL','SWOT','Trends','Market','Live'];
+function buildTabs(p){
+  document.getElementById('tabs').innerHTML=TABS.map((t,i)=>`<span class="tab ${i===0?'on':''}" onclick="showTab(${i})">${t}</span>`).join('');
+  document.getElementById('panels').innerHTML=TABS.map((t,i)=>`<div class="panel ${i===0?'on':''}" id="p-${i}">${PANEL[t](p)}</div>`).join('');
+  // live tab wiring deferred until opened
+}
+function showTab(i){document.querySelectorAll('.tab').forEach((t,n)=>t.classList.toggle('on',n===i));
+  document.querySelectorAll('.panel').forEach((pn,n)=>pn.classList.toggle('on',n===i));
+  if(TABS[i]==='Live'&&!liveStarted)startLive();}
+const deep={Compliance:'compliance.html',PESTEL:'pestel.html',SWOT:'swot.html',Trends:'trends.html',Market:'competitors.html'};
+function deepLink(t){return `<a class="opendeep" href="${deep[t]}" data-link>Open the full ${t} page →</a>`}
+const PANEL={
+ Overview:p=>`<div class="dgrid">
+   <div class="dcard"><h4>Compliance</h4>${p.compliance.slice(0,3).map(o=>`<div class="orow"><span class="dot" style="background:${o[1]}"></span><div><div class="ot">${o[0]}</div><div class="os">[${o[2]}]</div></div></div>`).join('')}${deepLink('Compliance')}</div>
+   <div class="dcard"><h4>Macro (PESTEL)</h4>${p.pestel.map(f=>`<div class="orow"><span class="dot" style="background:${f[2]}"></span><div><div class="ot">${f[0]}</div><div class="os">${f[1]}</div></div></div>`).join('')}${deepLink('PESTEL')}</div>
+   <div class="dcard"><h4>Trend signal</h4><div class="statepill" style="--sp:${p.trend.sc}"><i></i>${p.trend.state}</div><div class="spark2" style="--sc:${p.trend.sc}">${p.trend.traj.map(v=>`<i style="height:${Math.round(v/Math.max(...p.trend.traj)*100)}%"></i>`).join('')}</div><div class="ot" style="font-size:13px">${p.trend.head}</div>${deepLink('Trends')}</div>
+   <div class="dcard"><h4>The market crack</h4><div class="ot" style="font-size:13.5px;margin-bottom:6px">Gap: <b style="color:var(--teal)">${p.market.gap}</b></div><div class="os" style="font-size:12px;color:var(--muted);line-height:1.5">${p.market.blk}</div>${deepLink('Market')}</div>
+ </div>`,
+ Compliance:p=>`<div class="dcard" style="max-width:760px">${p.compliance.map(o=>`<div class="orow"><span class="dot" style="background:${o[1]}"></span><div><div class="ot">${o[0]}</div><div class="os">[${o[2]}]</div></div></div>`).join('')}${deepLink('Compliance')}</div>`,
+ PESTEL:p=>`<div class="dgrid">${p.pestel.map(f=>`<div class="dcard"><div class="statepill" style="--sp:${f[2]}"><i></i>${f[1]}</div><div class="ot" style="font-size:17px;font-family:'Space Grotesk';margin-top:10px">${f[0]}</div></div>`).join('')}</div><div style="margin-top:14px">${deepLink('PESTEL')}</div>`,
+ SWOT:p=>`<div class="qmini" style="max-width:640px">${[['Strengths','S',p.swot.S,TEAL],['Weaknesses','W',p.swot.W,AMB],['Opportunities','O',p.swot.O,BLUE],['Threats','T',p.swot.T,RED]].map(q=>`<div class="qq" style="--qc:${q[3]}"><div class="qh">${q[0]}</div><p>${q[2]}</p></div>`).join('')}</div><div style="margin-top:14px">${deepLink('SWOT')}</div>`,
+ Trends:p=>`<div class="dcard" style="max-width:680px"><div class="statepill" style="--sp:${p.trend.sc}"><i></i>${p.trend.state}</div><div class="spark2" style="--sc:${p.trend.sc};height:90px">${p.trend.traj.map(v=>`<i style="height:${Math.round(v/Math.max(...p.trend.traj)*100)}%"></i>`).join('')}</div><div class="ot" style="font-size:16px;font-family:'Space Grotesk';margin-bottom:10px">${p.trend.head}</div>${p.trend.pts.map(t=>`<div class="orow"><span class="dot" style="background:${p.trend.sc}"></span><div class="ot" style="font-size:13px">${t}</div></div>`).join('')}${deepLink('Trends')}</div>`,
+ Market:p=>`<div class="dcard" style="max-width:680px"><div class="ot" style="font-size:15px;margin-bottom:8px">The crack in the wall for you: <b style="color:var(--teal)">${p.market.gap}</b></div><div class="os" style="color:var(--muted);font-size:13px;line-height:1.6">${p.market.blk}</div>${deepLink('Market')}</div>`,
+ Live:p=>`<div style="max-width:760px"><p style="color:var(--muted);font-size:13.5px;margin-bottom:16px">Run the live multi-agent team on your profile — it keeps running while you switch tabs. <span id="lstate" style="color:var(--teal);font-family:'Space Grotesk'"></span></p><div class="lpipe" id="lpipe"></div></div>`,
+};
+
+/* ---- live tab (persists across dashboard tab switches; same page) ---- */
+const LORDER=[['orchestrator','Orchestrator','⬡'],['rbi','RBI compliance','◉'],['pestel','PESTEL','◈'],['competitor','Competitor','⬢'],['trend','Trend','◭'],['faithfulness','Faithfulness','✶'],['crossexam','Cross-examination','⇄'],['swot','SWOT','◫'],['analysis','Synthesis','◆'],['responder','Response','➤']];
+const LSPEC=['rbi','pestel','competitor','trend'];let liveStarted=false,les,lRoute=null;
+function startLive(){liveStarted=true;lRoute=null;const p=profile();
+  const q=`I'm a ${p.label} at ${p.stage||'early'} stage aiming to ${p.goal||'stay compliant'} — what changes for me across RBI compliance, competitors and trends?`;
+  document.getElementById('lpipe').innerHTML=LORDER.map(a=>`<div class="lnode" id="l-${a[0]}"><div class="lic">${a[2]}</div><div style="flex:1;min-width:0"><b>${a[1]}</b><span class="lst" id="ls-${a[0]}">queued</span><div class="lsrc" id="lsr-${a[0]}"></div></div></div>`).join('');
+  document.getElementById('lstate').textContent='running on: '+p.label;
+  ladvance();
+  les=new EventSource('/api/stream?q='+encodeURIComponent(q));
+  les.onmessage=e=>{const d=JSON.parse(e.data);
+    if(d.error){document.getElementById('lstate').textContent='⚠ '+d.error;les.close();return}
+    if(d.done){LORDER.forEach(a=>{const el=document.getElementById('l-'+a[0]);if(el&&!el.classList.contains('done')&&!el.classList.contains('skipped'))lDone(a[0]);});document.getElementById('lstate').textContent='done ✓ — '+((d.sources||[]).length)+' sources';les.close();return}
+    if(d.node==='orchestrator'&&d.route_flags){
+      lRoute=d.route_flags;
+      LSPEC.forEach(s=>{if(!lRoute[s]){const el=document.getElementById('l-'+s);if(el&&!el.classList.contains('done')){el.classList.add('skipped');document.getElementById('ls-'+s).textContent='skipped'}}});
+    }
+    if(d.skipped){const el=document.getElementById('l-'+d.node);if(el&&!el.classList.contains('done')){el.classList.remove('active');el.classList.add('skipped');document.getElementById('ls-'+d.node).textContent='skipped';ladvance();return}}
+    lDone(d.node,d.sources);ladvance();};
+  les.onerror=()=>{les.close()};
+}
+const lIsDone=n=>{const el=document.getElementById('l-'+n);return el&&(el.classList.contains('done')||el.classList.contains('skipped'))};
+function lActiveSpec(){return lRoute?LSPEC.filter(s=>lRoute[s]):LSPEC.slice()}
+function ladvance(){let act=[];
+  const specs=lActiveSpec();
+  if(!lIsDone('orchestrator'))act=['orchestrator'];
+  else if(specs.some(s=>!lIsDone(s)))act=specs.filter(s=>!lIsDone(s));
+  else if(!lIsDone('faithfulness'))act=['faithfulness'];
+  else if(!lIsDone('crossexam'))act=['crossexam'];
+  else if(!lIsDone('swot'))act=['swot'];
+  else if(!lIsDone('analysis'))act=['analysis'];
+  else act=['responder'];
+  document.querySelectorAll('.lnode').forEach(n=>{if(!n.classList.contains('skipped'))n.classList.remove('active')});
+  act.forEach(n=>{const el=document.getElementById('l-'+n);if(el&&!el.classList.contains('done')&&!el.classList.contains('skipped')){el.classList.add('active');document.getElementById('ls-'+n).textContent='running'}});}
+function lDone(node,sources){const el=document.getElementById('l-'+node);if(!el||el.classList.contains('done')||el.classList.contains('skipped'))return;
+  el.classList.remove('active');el.classList.add('done');document.getElementById('ls-'+node).textContent='done';
+  if(sources&&sources.length){const box=document.getElementById('lsr-'+node);const seen=new Set();
+    box.innerHTML=sources.filter(s=>{const k=s.ref||s.title;if(!k||seen.has(k))return false;seen.add(k);return true}).map(s=>{const r=s.ref||'';
+      if(/^https?:\/\//.test(r)){let d=r;try{d=new URL(r).hostname.replace(/^www\./,'')}catch(e){}return `<a href="${r}" target="_blank" rel="noopener">↗ ${d}</a>`}
+      return `<span>▣ ${s.title||r}</span>`}).join('')}}
+
+/* ---- boot ---- */
+function resetProfile(){localStorage.removeItem('cs_profile');answers={};step=0;
+  document.getElementById('dash').style.display='none';document.getElementById('loading').style.display='none';
+  document.getElementById('onboard').style.display='block';renderQ();}
+(function boot(){const saved=localStorage.getItem('cs_profile');
+  if(saved){try{answers=JSON.parse(saved);document.getElementById('onboard').style.display='none';showDash();return}catch(e){}}
+  renderQ();
+})();
+// persist when dashboard shown
+const _showDash=showDash;showDash=function(){localStorage.setItem('cs_profile',JSON.stringify(answers));_showDash();};
+</script>
+</body></html>

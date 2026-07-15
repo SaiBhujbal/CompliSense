@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Watchtower · CompliSense</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css?v=4" />
+<style>
+/* ================= RADAR ================= */
+.radarwrap{display:grid;grid-template-columns:minmax(340px,1.25fr) minmax(300px,1fr);gap:22px;align-items:stretch}
+@media(max-width:900px){.radarwrap{grid-template-columns:1fr}}
+.radarcard{position:relative;background:radial-gradient(120% 120% at 50% 40%,#10141c 0%,#0a0d13 70%);border:1px solid var(--stroke);border-radius:var(--rl);padding:14px;overflow:hidden}
+.radar{position:relative;width:100%;aspect-ratio:1;max-height:640px}
+.radar svg{position:absolute;inset:0;width:100%;height:100%}
+.r-ring{fill:none;stroke:rgba(76,195,182,.10);stroke-width:1}
+.r-ring.major{stroke:rgba(76,195,182,.18)}
+.r-spoke{stroke:rgba(76,195,182,.08);stroke-width:1}
+.r-seclab{font-family:'Space Grotesk';font-size:10.5px;letter-spacing:.14em;fill:#5f6b7a;text-transform:uppercase}
+.r-sweep{transform-origin:50% 50%;animation:rsweep 7s linear infinite}
+@keyframes rsweep{to{transform:rotate(360deg)}}
+.blip{cursor:pointer;transition:opacity .3s}
+.blip circle.core{transition:r .2s}
+.blip:hover circle.core{r:7}
+.blip.dim{opacity:.18}
+.blip .pulse{animation:blippulse 2.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blippulse{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(3.2)}}
+.r-center{font-family:'Space Grotesk';font-size:11px;letter-spacing:.2em;fill:#4cc3b6}
+.r-scanline{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.12) 3px 4px);border-radius:var(--rl)}
+.r-status{position:absolute;top:16px;left:18px;font-family:'Space Grotesk';font-size:11px;letter-spacing:.16em;color:var(--teal);text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.r-status .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:statblink 1.6s ease-in-out infinite}
+@keyframes statblink{50%{opacity:.25}}
+.r-legend{position:absolute;bottom:14px;left:18px;display:flex;gap:14px;font-size:10.5px;color:var(--faint)}
+.r-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+/* ---- blip popover (anchored dialogue on the radar) ---- */
+.callout{position:absolute;z-index:5;width:min(300px,72%);background:rgba(16,20,27,.97);border:1px solid var(--sc,var(--teal));
+  border-radius:14px;padding:13px 15px;box-shadow:0 14px 44px -12px rgba(0,0,0,.85),0 0 18px -6px var(--sc,var(--teal));
+  opacity:0;transform:scale(.9);transition:opacity .22s,transform .25s cubic-bezier(.2,.9,.3,1.3);pointer-events:none}
+.callout.show{opacity:1;transform:scale(1);pointer-events:auto}
+.callout .tail{position:absolute;width:10px;height:10px;background:inherit;border-left:1px solid var(--sc,var(--teal));border-bottom:1px solid var(--sc,var(--teal));transform:rotate(45deg);bottom:-6px;left:24px}
+.callout.below .tail{bottom:auto;top:-6px;transform:rotate(225deg)}
+.callout .ck{font-family:'Space Grotesk';font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--sc,var(--teal));margin-bottom:5px;display:flex;justify-content:space-between}
+.callout .ck .cx{cursor:pointer;color:var(--faint);letter-spacing:0}
+.callout .ct{font-size:12.5px;line-height:1.45;margin-bottom:8px}
+.callout .ctags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.callout .ctags span{font-size:9.5px;font-family:'Space Grotesk';color:var(--teal);border:1px solid var(--stroke);border-radius:10px;padding:1px 7px}
+.callout .cacts{display:flex;gap:7px}
+.callout .cacts a{flex:1;text-align:center;font-family:'Space Grotesk';font-size:11px;text-decoration:none;border-radius:8px;padding:7px 8px;transition:.2s}
+.callout .cacts .a1{background:var(--teal);color:#0b0d12}
+.callout .cacts .a2{border:1px solid var(--stroke2);color:var(--muted)}
+.callout .cacts .a2:hover{color:var(--text)}
+/* ============ INTEL PANEL ============ */
+.intel{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--stroke);border-radius:var(--rl);overflow:hidden}
+.intel .ihead{padding:16px 20px;border-bottom:1px solid var(--stroke);display:flex;justify-content:space-between;align-items:center}
+.intel .ihead b{font-family:'Space Grotesk';font-size:14px;letter-spacing:.06em}
+.intel .imeta{font-size:11px;color:var(--faint)}
+.intel .ibody{flex:1;overflow-y:auto;max-height:560px}
+.sigrow{display:flex;gap:12px;padding:13px 18px;border-bottom:1px solid var(--stroke);cursor:pointer;transition:.2s;border-left:3px solid transparent}
+.sigrow:hover,.sigrow.sel{background:var(--panel2);border-left-color:var(--sc)}
+.sigrow .sv{flex-shrink:0;width:9px;height:9px;border-radius:50%;background:var(--sc);margin-top:5px;box-shadow:0 0 8px var(--sc)}
+.sigrow .st2{font-size:12.5px;line-height:1.45}
+.sigrow .sm{font-size:10.5px;color:var(--faint);margin-top:3px}
+.idetail{padding:18px 20px;border-top:1px solid var(--stroke2);background:var(--bg-soft);display:none}
+.idetail.show{display:block;animation:fadein .3s}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.idetail .dk2{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--sc,var(--teal));margin-bottom:6px;font-family:'Space Grotesk'}
+.idetail .dt2{font-size:14px;line-height:1.5;margin-bottom:8px}
+.idetail .dn2{font-size:12px;color:var(--muted);margin-bottom:10px}
+.idetail .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.idetail .tag2{font-size:10.5px;font-family:'Space Grotesk';color:var(--teal);border:1px solid var(--stroke);border-radius:12px;padding:2px 8px}
+.idetail .acts{display:flex;gap:8px;flex-wrap:wrap}
+.idetail .acts a{font-family:'Space Grotesk';font-size:12px;text-decoration:none;border-radius:9px;padding:8px 14px;transition:.2s}
+.idetail .acts .a1{background:var(--teal);color:#0b0d12}
+.idetail .acts .a1:hover{background:#5ad0c2}
+.idetail .acts .a2{border:1px solid var(--stroke2);color:var(--muted)}
+.idetail .acts .a2:hover{color:var(--text);border-color:var(--teal)}
+.wt-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 6px}
+.wt-chip{cursor:pointer;font-family:'Space Grotesk';font-size:12.5px;border:1px solid var(--stroke2);border-radius:20px;padding:7px 15px;color:var(--muted);transition:.2s}
+.wt-chip:hover{color:var(--text)}
+.wt-chip.on{color:#0b0d12;background:var(--teal);border-color:transparent;font-weight:500}
+</style></head>
+<body data-page="watchtower">
+<header class="phead wrap" style="padding-bottom:18px">
+  <div class="eyebrow">Watchtower · live regulatory radar</div>
+  <h1 class="grad glow">The RBI never sleeps.<br>Neither does this.</h1>
+  <p>Every blip is a live RBI circular — sector is the wedge, urgency is the distance, severity is the colour. The sweep never stops.</p>
+  <div class="wt-chips" id="chips"></div>
+</header>
+
+<section class="wrap" style="padding-top:8px">
+  <div class="radarwrap">
+    <div class="radarcard reveal">
+      <div class="r-status"><span class="dot"></span><span id="rstat">SCANNING RBI FEEDS…</span></div>
+      <div class="radar"><svg id="rsvg" viewBox="0 0 600 600"></svg></div>
+      <div class="callout" id="callout"></div>
+      <div class="r-scanline"></div>
+      <div class="r-legend">
+        <span><i style="background:var(--rose)"></i>Amendment</span>
+        <span><i style="background:var(--amber)"></i>Direction</span>
+        <span><i style="background:var(--indigo)"></i>Enforcement</span>
+        <span><i style="background:var(--sage)"></i>Draft</span>
+        <span><i style="background:var(--slate)"></i>Info</span>
+      </div>
+    </div>
+    <div class="intel reveal">
+      <div class="ihead"><b>SIGNALS</b><span class="imeta" id="meta">connecting…</span></div>
+      <div class="ibody" id="siglist"></div>
+      <div class="idetail" id="idetail"></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — not legal, financial, or regulatory advice. Always read the primary circular (linked) before acting.</p><div>CompliSense · Watchtower</div></div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="engine.js?v=4"></script>
+<script>
+const SECTORS=[['lending','LENDING'],['payments','PAYMENTS'],['p2p','P2P'],['aa_data','DATA / AA'],['markets_fx','FX / MKTS']];
+const SEVC={amendment:'#e0697f',new_direction:'#d9a34e',enforcement:'#8089e8',draft:'#7bbf8f',info:'#6f7891'};
+const SEVL={amendment:'Amendment',new_direction:'Direction',enforcement:'Enforcement',draft:'Draft',info:'Info'};
+const PROFS=[['all','Everything'],...SECTORS.map(s=>[s[0],s[1].charAt(0)+s[1].slice(1).toLowerCase()])];
+let cur='all',DATA=[],sel=-1;
+document.getElementById('chips').innerHTML=PROFS.map(p=>`<span class="wt-chip ${p[0]===cur?'on':''}" data-p="${p[0]}" onclick="setProf('${p[0]}')">${p[1]}</span>`).join('');
+
+const CX=300,CY=300,RMIN=52,RMAX=252;
+function baseRadar(){
+  const s=[];
+  for(let r=1;r<=4;r++)s.push(`<circle class="r-ring ${r===4?'major':''}" cx="${CX}" cy="${CY}" r="${RMIN+(RMAX-RMIN)*r/4}"/>`);
+  s.push(`<circle class="r-ring major" cx="${CX}" cy="${CY}" r="${RMIN}"/>`);
+  const n=SECTORS.length;
+  for(let i=0;i<n;i++){
+    const a=-Math.PI/2+i*2*Math.PI/n;
+    s.push(`<line class="r-spoke" x1="${CX+RMIN*Math.cos(a)}" y1="${CY+RMIN*Math.sin(a)}" x2="${CX+RMAX*Math.cos(a)}" y2="${CY+RMAX*Math.sin(a)}"/>`);
+    const la=a+Math.PI/n, lr=RMAX+22;
+    const x=CX+lr*Math.cos(la), y=CY+lr*Math.sin(la);
+    s.push(`<text class="r-seclab" x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle">${SECTORS[i][1]}</text>`);
+  }
+  // sweep beam (a translucent wedge that rotates)
+  s.push(`<g class="r-sweep"><path d="M ${CX} ${CY} L ${CX+RMAX} ${CY} A ${RMAX} ${RMAX} 0 0 0 ${CX+RMAX*Math.cos(-0.5)} ${CY+RMAX*Math.sin(-0.5)} Z" fill="url(#sweepgrad)"/></g>`);
+  s.push(`<defs><radialGradient id="sweepgrad" cx="50%" cy="50%" r="50%">
+    <stop offset="30%" stop-color="rgba(76,195,182,0)"/><stop offset="100%" stop-color="rgba(76,195,182,.16)"/></radialGradient></defs>`);
+  s.push(`<text class="r-center" x="${CX}" y="${CY+4}" text-anchor="middle">RBI</text>`);
+  return s.join('');
+}
+function hash(str){let h=0;for(const c of str)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+function blips(alerts){
+  const n=SECTORS.length, byDate=[...alerts].filter(a=>a.link);
+  byDate.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  const rankOf=new Map(byDate.map((a,i)=>[a.link,i]));
+  return alerts.filter(a=>a.link).map((a,idx)=>{
+    const si=Math.max(0,SECTORS.findIndex(s=>a.profiles.includes(s[0])));
+    const a0=-Math.PI/2+si*2*Math.PI/n, jitter=(hash(a.title)%1000)/1000;
+    const ang=a0+ (0.12+0.76*jitter)*2*Math.PI/n;
+    const rank=rankOf.get(a.link)||0;
+    const r=RMIN+(RMAX-RMIN-14)*Math.min(1,rank/Math.max(1,byDate.length-1));
+    const x=CX+r*Math.cos(ang), y=CY+r*Math.sin(ang);
+    const c=SEVC[a.severity]||SEVC.info;
+    const hot=a.severity==='amendment'||a.new;
+    a._rx=x;a._ry=y;  // radar coords for the anchored popover
+    return `<g class="blip" data-i="${idx}" transform="translate(${x},${y})" onclick="pick(${idx});event.stopPropagation()">
+      ${hot?`<circle class="pulse" r="6" fill="none" stroke="${c}" stroke-width="1.5"/>`:''}
+      <circle class="core" r="${hot?5:4}" fill="${c}"/>
+    </g>`;
+  }).join('');
+}
+function render(){
+  const svg=document.getElementById('rsvg');
+  svg.innerHTML=baseRadar()+blips(DATA);
+  document.getElementById('siglist').innerHTML=DATA.map((a,i)=>`
+    <div class="sigrow ${i===sel?'sel':''}" style="--sc:${SEVC[a.severity]||SEVC.info}" onclick="pick(${i})">
+      <span class="sv"></span>
+      <span><span class="st2">${a.title.slice(0,110)}${a.title.length>110?'…':''}</span>
+      <div class="sm">${SEVL[a.severity]||''} · ${a.kind==='press_release'?'Press release':'Notification'}${a.new?' · <b style="color:var(--teal)">NEW</b>':''}</div></span>
+    </div>`).join('');
+}
+function pick(i,fromList){sel=i;const a=DATA[i];if(!a)return;
+  document.querySelectorAll('.sigrow').forEach((r,n)=>r.classList.toggle('sel',n===i));
+  document.querySelectorAll('.blip').forEach(b=>b.classList.toggle('dim',+b.dataset.i!==i));
+  const d=document.getElementById('idetail');
+  d.style.setProperty('--sc',SEVC[a.severity]||SEVC.info);
+  d.innerHTML=`<div class="dk2">${SEVL[a.severity]} · ${a.note||''}</div>
+    <div class="dt2">${a.title}</div>
+    <div class="dn2">${a.date||''}</div>
+    ${a.matched&&a.matched.length?`<div class="tags">${a.matched.slice(0,6).map(m=>`<span class="tag2">${m}</span>`).join('')}</div>`:''}
+    <div class="acts">
+      <a class="a1" href="agents.html?q=${encodeURIComponent('What does this RBI update mean for my business: '+a.title)}" data-link>◉ Ask the agents</a>
+      <a class="a2" href="${a.link}" target="_blank" rel="noopener">Read circular ↗</a>
+    </div>`;
+  d.classList.add('show');
+  openCallout(a);
+}
+window.pick=pick;
+
+/* anchored dialogue on the radar itself — appears at the blip you clicked */
+function openCallout(a){
+  const co=document.getElementById('callout');
+  const card=document.querySelector('.radarcard').getBoundingClientRect();
+  const radar=document.querySelector('.radar').getBoundingClientRect();
+  if(a._rx===undefined){co.classList.remove('show');return}
+  const c=SEVC[a.severity]||SEVC.info;
+  co.style.setProperty('--sc',c);
+  co.innerHTML=`<div class="tail"></div>
+    <div class="ck"><span>${SEVL[a.severity]}${a.new?' · NEW':''}</span><span class="cx" onclick="closeCallout();event.stopPropagation()">✕</span></div>
+    <div class="ct">${a.title.slice(0,120)}${a.title.length>120?'…':''}</div>
+    ${a.matched&&a.matched.length?`<div class="ctags">${a.matched.slice(0,4).map(m=>`<span>${m}</span>`).join('')}</div>`:''}
+    <div class="cacts">
+      <a class="a1" href="agents.html?q=${encodeURIComponent('What does this RBI update mean for my business: '+a.title)}" data-link>◉ Ask agents</a>
+      <a class="a2" href="${a.link}" target="_blank" rel="noopener">Circular ↗</a>
+    </div>`;
+  // blip position in card pixels
+  const bx=(radar.left-card.left)+a._rx/600*radar.width;
+  const by=(radar.top-card.top)+a._ry/600*radar.height;
+  co.style.visibility='hidden';co.classList.add('show');
+  const w=co.offsetWidth,h=co.offsetHeight;
+  let left=Math.max(10,Math.min(card.width-w-10,bx-30));
+  let below=by-h-16<8;
+  co.classList.toggle('below',below);
+  co.style.left=left+'px';
+  co.style.top=(below?by+14:by-h-14)+'px';
+  co.querySelector('.tail').style.left=Math.max(12,Math.min(w-22,bx-left-5))+'px';
+  co.style.visibility='';
+}
+function closeCallout(){document.getElementById('callout').classList.remove('show');
+  document.querySelectorAll('.blip').forEach(b=>b.classList.remove('dim'));}
+window.closeCallout=closeCallout;
+document.querySelector('.radarcard').addEventListener('click',e=>{
+  if(!e.target.closest('.callout')&&!e.target.closest('.blip'))closeCallout();});
+async function load(){
+  try{
+    const r=await fetch('/api/watchtower?profile='+cur+'&limit=40');
+    const d=await r.json();
+    DATA=d.alerts.filter(a=>a.link);sel=-1;
+    document.getElementById('meta').textContent=`${d.new_count} new · ${DATA.length} tracked`;
+    document.getElementById('rstat').textContent=`TRACKING ${DATA.length} SIGNALS · ${cur.toUpperCase()}`;
+    document.getElementById('idetail').classList.remove('show');
+    render();
+    const amend=DATA.findIndex(a=>a.severity==='amendment');
+    if(amend>=0)setTimeout(()=>pick(amend),950);  // after the reveal settles
+  }catch(e){document.getElementById('rstat').textContent='FEED UNREACHABLE';}
+}
+function setProf(p){cur=p;document.querySelectorAll('.wt-chip').forEach(c=>c.classList.toggle('on',c.dataset.p===p));load()}
+window.setProf=setProf;
+load();setInterval(load,10*60*1000);
+</script>
+</body></html>

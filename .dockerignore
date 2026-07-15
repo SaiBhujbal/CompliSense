@@ -1,0 +1,35 @@
+.git
+.vs
+.vscode
+.idea
+.claude
+.cursor
+**/__pycache__
+**/*.py[cod]
+**/*.egg-info
+.venv
+venv
+ENV
+env
+.env
+*.log
+_uvicorn.log
+.pytest_cache
+.coverage
+htmlcov
+*.pid
+
+# Host-local ML/IDE caches — use compose volumes instead
+data/chroma_db
+data/*.json
+.cache
+**/CopilotIndices
+**/FileContentIndex
+**/copilot-chat
+
+# Docs / research noise (not needed at runtime)
+evals
+research
+agent-transcripts
+*.md
+!README.md

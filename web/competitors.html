@@ -3,37 +3,209 @@
 <title>Market · CompliSense</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" /></head>
+<link rel="stylesheet" href="style.css?v=3" /></head>
 <body data-page="competitors">
 <header class="phead wrap">
   <a class="backlink" href="index.html" data-link>← all agents</a>
-  <div class="eyebrow">Competitor agent · thinking_level: medium</div>
+  <div class="eyebrow">Competitor agent · thinking_level: high</div>
   <h1 class="grad glow">Market</h1>
-  <p>Who's funded, how they're positioned — cards tilt to your cursor, the map plots the field.</p>
+  <p>The wall is the market as it stands today. The crack running through it is the opening — tap it to see the companies inside and the gap they leave for you.</p>
 </header>
 
-<section class="wrap"><div class="grid g3 tilt" id="cmps"></div></section>
+<!-- ===== THE WALL = THE MARKET, WITH A CRACK ===== -->
+<section class="wrap">
+  <div class="reveal"><div class="h2">The market — and the crack</div><p class="lead">The wall is the market as it stands: its size, growth and rails. The glowing crack is the seam the incumbents leave open. Tap it to see the companies and your opening.</p></div>
+  <div class="card wallcard reveal">
+    <div class="wallstage" id="stage">
+      <!-- the wall (the competition). Zooming pushes INTO the crack: it scales up & fades. -->
+      <div class="wall">
+        <svg viewBox="0 0 1200 680" preserveAspectRatio="xMidYMid slice" aria-label="A wall of competitors with a crack running through it">
+          <defs>
+            <linearGradient id="brickGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1d222c"/><stop offset="1" stop-color="#11141a"/>
+            </linearGradient>
+            <linearGradient id="brickGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#20242e"/><stop offset="1" stop-color="#13161d"/>
+            </linearGradient>
+            <linearGradient id="crackGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#4cc3b6"/><stop offset="1" stop-color="#8089e8"/>
+            </linearGradient>
+            <filter id="cglow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect x="0" y="0" width="1200" height="680" fill="#0b0d12"/>
+          <!-- four blocks = four incumbents -->
+          <rect x="30" y="40" width="558" height="288" rx="4" fill="url(#brickGrad)" class="mortar"/>
+          <rect x="612" y="40" width="558" height="288" rx="4" fill="url(#brickGrad2)" class="mortar"/>
+          <rect x="30" y="352" width="558" height="288" rx="4" fill="url(#brickGrad2)" class="mortar"/>
+          <rect x="612" y="352" width="558" height="288" rx="4" fill="url(#brickGrad)" class="mortar"/>
+          <!-- brick courses -->
+          <g stroke="#0a0c10" stroke-width="1.5" opacity="0.7">
+            <path d="M30,136 H588 M30,232 H588 M612,136 H1170 M612,232 H1170"/>
+            <path d="M30,448 H588 M30,544 H588 M612,448 H1170 M612,544 H1170"/>
+            <path d="M309,40 V328 M309,352 V640 M891,40 V328 M891,352 V640"/>
+          </g>
+          <!-- incumbent labels (the competition IS the wall — no cards) -->
+          <text x="58" y="104" class="bname" font-size="34">$51.3B</text>
+          <text x="58" y="130" class="bmeta" font-size="13">India FinTech market · 2026</text>
+          <text x="58" y="306" class="bstr" font-size="12">[Mordor Intelligence]</text>
 
+          <text x="660" y="104" class="bname" font-size="34">$514.6B</text>
+          <text x="660" y="130" class="bmeta" font-size="13">Digital lending by 2030</text>
+          <text x="660" y="306" class="bstr" font-size="12">[Citi Ventures]</text>
+
+          <text x="58" y="416" class="bname" font-size="32">13B+ / mo</text>
+          <text x="58" y="442" class="bmeta" font-size="13">UPI transactions</text>
+          <text x="58" y="618" class="bstr" font-size="12">[NPCI · 2026]</text>
+
+          <text x="660" y="416" class="bname" font-size="34">31.5%</text>
+          <text x="660" y="442" class="bmeta" font-size="13">Digital-lending CAGR to 2030</text>
+          <text x="660" y="618" class="bstr" font-size="12">[Grand View]</text>
+
+          <!-- the crack: a jagged fissure widening at the centre -->
+          <polygon class="crackdepth" points="595,40 605,40 614,180 648,340 614,500 605,640 595,640 586,500 552,340 586,180"/>
+          <path class="crackline" d="M595,40 L586,180 L552,340 L586,500 L595,640"/>
+          <path class="crackline" d="M605,40 L614,180 L648,340 L614,500 L605,640"/>
+          <path class="crackline" d="M552,340 L470,300 M648,340 L735,372" opacity="0.7"/>
+          <!-- the gap marker -->
+          <g class="cgap" id="cgap" transform="translate(600,340)" onclick="enterCrack()">
+            <circle class="cpulse" r="12"/>
+            <circle class="cring" r="40"/>
+            <circle class="ccore" r="8"/>
+            <text class="clabel" x="0" y="-44" text-anchor="middle">THE GAP</text>
+            <text x="0" y="-26" text-anchor="middle" font-size="10.5" fill="#9aa2b1" letter-spacing=".06em">the opening in the market</text>
+          </g>
+        </svg>
+      </div>
+      <div class="wallhint" onclick="enterCrack()">↳ tap the crack to see the companies &amp; the opening</div>
+
+      <!-- the view THROUGH the crack — competitor deep-dive, revealed in place, no scroll -->
+      <div class="crackview" id="crackview">
+        <span class="cvback" onclick="exitCrack()">↩ back to the wall</span>
+        <div class="cvkey">Through the crack · the companies &amp; your opening</div>
+        <div class="cvtabs" id="cvtabs"></div>
+        <div id="cvdetail"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== the ads angle: spend vs trust ===== -->
+<section class="wrap">
+  <div class="reveal"><div class="h2">Ad-spend vs trust — the scandal radar</div><p class="lead">Heavy acquisition spend on a <b style="color:var(--text)">thin trust/compliance base</b> is a brittle wall. That delta is where conduct scandals and RBI action land first — you take it with grounded trust, not bigger budgets.</p></div>
+  <div class="grid g2">
+    <div class="card reveal" id="sigs"></div>
+    <div class="card reveal">
+      <div class="h2" style="font-size:20px">How it works — and why it's a crack</div>
+      <p style="color:var(--muted);font-size:13.5px;margin-top:10px;line-height:1.7"><b style="color:var(--text)">How:</b> a tall <b style="color:var(--amber)">amber</b> bar (ad-spend) beside a short <b style="color:var(--teal)">teal</b> bar (trust/compliance) means a player is <b style="color:var(--text)">buying growth faster than it's earning trust</b>. The bigger the gap, the more they must keep spending just to stand still.</p>
+      <p style="color:var(--muted);font-size:13.5px;margin-top:12px;line-height:1.7"><b style="color:var(--text)">Why it's a crack:</b> acquisition is brutal — Indian FinTech CAC is <b style="color:var(--text)">₹1,000–3,000</b> per customer and rose <b style="color:var(--text)">40–60%</b> from 2023–2025 <span class="src">[First Page Sage]</span>; KYC alone adds <b style="color:var(--text)">$20–30</b> before a rupee of revenue, and ~<b style="color:var(--text)">73%</b> of users abandon a FinTech app within a week <span class="src">[Red Branch]</span>. In a tightening RBI regime, high-spend / thin-trust players are exactly where conduct scandals and regulatory action land first — so a grounded, cited-compliance brand converts switchers at a <b style="color:var(--text)">lower CAC and a healthier LTV:CAC</b> (keep it above 3:1) without outspending anyone.</p>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card reveal" style="border-top:2px solid var(--amber)"><b style="font-family:'Space Grotesk';font-size:24px">₹1–3k</b><p style="color:var(--muted);font-size:12.5px;margin-top:4px">CAC per customer, India FinTech <span class="src">[Focus Digital]</span></p></div>
+    <div class="card reveal" style="border-top:2px solid var(--rose)"><b style="font-family:'Space Grotesk';font-size:24px">+40–60%</b><p style="color:var(--muted);font-size:12.5px;margin-top:4px">CAC rise, 2023→2025 <span class="src">[First Page Sage]</span></p></div>
+    <div class="card reveal" style="border-top:2px solid var(--rose)"><b style="font-family:'Space Grotesk';font-size:24px">73%</b><p style="color:var(--muted);font-size:12.5px;margin-top:4px">abandon the app within a week <span class="src">[Red Branch]</span></p></div>
+    <div class="card reveal" style="border-top:2px solid var(--teal)"><b style="font-family:'Space Grotesk';font-size:24px">&gt;3:1</b><p style="color:var(--muted);font-size:12.5px;margin-top:4px">healthy LTV:CAC to defend <span class="src">[benchmark]</span></p></div>
+  </div>
+  <p style="color:var(--faint);font-size:12px;margin-top:12px;max-width:760px">Spend-vs-trust signals are illustrative composites; CAC figures are from third-party benchmarks. The live competitor agent refreshes competitor data from current web results.</p>
+</section>
+
+<!-- ===== positioning + funding ===== -->
 <section class="wrap"><div class="grid g2">
-  <div class="card reveal"><div class="h2" style="font-size:22px">Positioning</div><p class="lead" style="margin-bottom:16px">Compliance maturity × market reach.</p><div style="height:320px"><canvas id="map" role="img" aria-label="Competitor positioning scatter"></canvas></div></div>
+  <div class="card reveal"><div class="h2" style="font-size:22px">Positioning</div><p class="lead" style="margin-bottom:16px">Compliance maturity × market reach. The empty top-left is the crack.</p><div style="height:320px"><canvas id="map" role="img" aria-label="Competitor positioning scatter"></canvas></div></div>
   <div class="card reveal"><div class="h2" style="font-size:22px">Funding raised</div><p class="lead" style="margin-bottom:16px">Total disclosed, US$ millions.</p><div style="height:320px"><canvas id="fund" role="img" aria-label="Funding by competitor"></canvas></div></div>
 </div></section>
 
-<footer><div class="wrap"><p class="warn">⚠️ Informational only — competitor data from public sources, may be incomplete. Funding figures are cite-or-omit; verify before relying.</p><div>CompliSense · competitor agent</div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<footer><div class="wrap"><p class="warn">⚠️ Informational only — competitor data from public sources, may be incomplete or dated. Funding figures and signals are illustrative; verify before relying.</p><div>CompliSense · competitor agent</div></div></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="engine.js"></script>
+<script src="engine.js?v=3"></script>
 <script>
 const C=[
- {n:'LenDenClub',tag:'P2P',f:'$10M',st:'Series B',x:6,y:7,c:'#3df0ff',r:11},
- {n:'KreditBee',tag:'Digital lending',f:'$700M',st:'Series D',x:8.5,y:6.5,c:'#8b7bff',r:16},
- {n:'Cred',tag:'Payments',f:'$806M',st:'Late',x:9,y:7.5,c:'#ff5db1',r:17},
- {n:'You',tag:'CompliSense',f:'—',st:'Series B',x:5,y:8.5,c:'#39e6a8',r:13},
+ {n:'KreditBee',x:8.5,y:6,c:'#8089e8'},
+ {n:'Cred',x:9,y:7,c:'#e08896'},
+ {n:'LenDenClub',x:6,y:6.5,c:'#4cc3b6'},
+ {n:'You',x:4.5,y:9,c:'#7bbf8f'},
 ];
-document.getElementById('cmps').innerHTML=C.map(c=>`<div class="card t3 reveal"><div style="display:flex;justify-content:space-between"><span class="tag" style="color:${c.c};border-color:${c.c}">${c.tag}</span></div><h3 style="font-size:20px;margin:14px 0 4px">${c.n}</h3><div style="display:flex;gap:20px;margin-top:14px"><div><span style="color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.1em">Funding</span><br><b style="font-family:'Space Grotesk';font-size:20px">${c.f}</b></div><div><span style="color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.1em">Stage</span><br><b style="font-family:'Space Grotesk';font-size:20px">${c.st}</b></div></div></div>`).join('');
-scatter('map',C.map(c=>({n:c.n,x:c.x,y:c.y,c:c.c,r:c.r})));
-hbars('fund',['KreditBee','Cred','LenDenClub'],[700,806,10],['#8b7bff','#ff5db1','#3df0ff']);
+
+/* through-the-crack blockers — why each block of the wall can't reach the gap (NOT cards) */
+/* competitor deep-dives shown one-at-a-time inside the crack (rich + cited, fits no-scroll) */
+const ZB=[
+ {n:'KreditBee',c:'#8089e8',tag:'Digital lending',fund:'$1.5B valuation · pre-IPO',
+  dom:['#1 by volume in consumer & small-ticket personal loans','FY25–26 disbursals ₹30,000 cr · AUM ₹15,000 cr','Unicorn: $280M Series E, $1.5B valuation (Apr 2026)'],
+  doing:['Profitable — Q3 FY26 revenue ₹805 cr, net profit ₹137 cr [S1]','$476M raised over 11 rounds; final private round pre-IPO [S2]','Pushing into secured loans & MSME, cautiously [S3]'],
+  crack:'Engineered for consumer scale, not AA-consented MSME underwriting; limited public compliance transparency.',
+  cites:[['S1','Outlook — KreditBee FY26','https://www.outlookbusiness.com'],['S2','Fintech News SG — Series E','https://fintechnews.sg'],['S3','Tracxn — KreditBee','https://tracxn.com']]},
+ {n:'Cred',c:'#e08896',tag:'Payments',fund:'$806M · Late stage',
+  dom:['Premium, high-credit-score user base','Credit-card bill payments + rewards engine','Top-of-mind brand among affluent users'],
+  doing:['High valuation; monetising via lending & commerce [S1]','Expanding into UPI and secured credit [S2]','Under scrutiny on the path to profitability [S2]'],
+  crack:'Deliberately premium — avoids thin-file & small-ticket MSME, so the mass-market seam stays wide open.',
+  cites:[['S1','Crunchbase — CRED','https://crunchbase.com'],['S2','Economic Times','https://economictimes.indiatimes.com']]},
+ {n:'LenDenClub',c:'#4cc3b6',tag:'P2P',fund:'$10M · Series B',
+  dom:['Early, established P2P lending marketplace','Retail lender ↔ borrower matching','Recognised P2P brand'],
+  doing:['Adjusting to tighter RBI P2P norms (2024) [S2]','Volumes pressured by the rule changes [S1]','Thin capital vs balance-sheet lenders [S1]'],
+  crack:'P2P model carries structural regulatory fragility; little capital to scale a compliance-heavy MSME book.',
+  cites:[['S1','Tracxn — LenDenClub','https://tracxn.com'],['S2','RBI P2P Master Direction','https://rbi.org.in']]},
+ {n:'Super-apps',c:'#d9a34e',tag:'Distribution',fund:'scale · trust',
+  dom:['Massive distribution & daily-active users','Existing payments rails & user trust','Cross-sell across many services'],
+  doing:['Bundling credit/insurance via partners [S1]','Compliance run as a cost centre, not a product [S1]','Breadth over RBI-specific depth [S2]'],
+  crack:'Generalist reach but shallow RBI-specific depth — compliance is overhead, not a capability.',
+  cites:[['S1','Sector report (Mordor)','https://mordorintelligence.com'],['S2','Economic Times','https://economictimes.indiatimes.com']]},
+ {n:'↳ The gap (you)',c:'#7bbf8f',tag:'CompliSense',fund:'the opening',isGap:true,
+  dom:['Small-ticket, thin-file MSME borrowers','Need AA-consented, compliance-grounded lending','Under-served by every block in the wall'],
+  doing:['Originate on a citation-grounded compliance spine [S1]','Underwrite on AA-consented data [S2]','Distribute via bank co-lending — off balance sheet [S3]'],
+  crack:'You go through the crack the wall can’t close: grounded compliance is your product, not their cost centre.',
+  cites:[['S1','RBI Digital Lending 2025','https://rbi.org.in'],['S2','Account Aggregator MD','https://rbi.org.in'],['S3','Co-Lending framework','https://rbi.org.in']]},
+];
+function renderCV(i){const z=ZB[i];const lab=z.isGap?'The opening':'What they dominate';
+  const cites=z.cites.map(c=>`<a href="${c[2]}" target="_blank" rel="noopener" title="${c[1]}">[${c[0]}] ${c[1]}</a>`).join('');
+  document.getElementById('cvdetail').innerHTML=`<div style="--ct:${z.c}">
+    <div class="cvhead"><span class="cvname" style="color:${z.c}">${z.n}</span><span class="cvmeta">${z.tag} · ${z.fund}</span></div>
+    <div class="cvdetail">
+      <div class="cvcol"><h5>${lab}</h5><ul>${z.dom.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+      <div class="cvcol"><h5>${z.isGap?'Your wedge':'How they’re doing'}</h5><ul>${z.doing.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+    </div>
+    <div class="cvcrackline"><b style="color:${z.isGap?'var(--teal)':'var(--rose)'}">${z.isGap?'Why it’s yours →':'The crack they leave →'}</b> ${z.crack}</div>
+    <div class="cvcites">${cites}</div>
+  </div>`;
+  document.querySelectorAll('.cvtab').forEach((t,n)=>t.classList.toggle('on',n===i));}
+document.getElementById('cvtabs').innerHTML=ZB.map((z,i)=>`<span class="cvtab ${i===0?'on':''}" style="--ct:${z.c}" onclick="renderCV(${i})">${z.n}</span>`).join('');
+renderCV(0);window.renderCV=renderCV;
+
+/* ad-spend vs trust signals (0-100 illustrative composites) */
+const S=[
+ {n:'KreditBee',ad:88,tr:46},
+ {n:'Cred',ad:95,tr:62},
+ {n:'LenDenClub',ad:40,tr:50},
+ {n:'You',ad:22,tr:84},
+];
+document.getElementById('sigs').innerHTML=S.map(s=>{const gap=s.ad-s.tr;
+ return `<div class="sig"><div class="sh"><b>${s.n}</b><span style="color:var(--faint);font-size:11.5px">spend ${s.ad} · trust ${s.tr}</span></div>
+ <div class="sbars"><div class="sbar ad"><i data-w="${s.ad}"></i></div><div class="sbar tr"><i data-w="${s.tr}"></i></div></div>
+ <div class="slab"><span>Ad-spend</span><span>Trust / compliance</span></div>
+ ${gap>=30?`<div class="sgapnote">⚠ ${gap}-pt trust deficit — exploitable</div>`:gap<=0?`<div class="sgapnote" style="color:var(--teal)">✓ trust-led position</div>`:''}</div>`}).join('');
+
+/* crack zoom interaction — wall flies apart, the view through the crack rises in place */
+const stage=document.getElementById('stage');
+function enterCrack(){stage.classList.add('in');}
+function exitCrack(){stage.classList.remove('in');}
+/* depth: the wall parallaxes gently to the cursor (disabled once inside the crack) */
+(function(){const wall=document.querySelector('.wall');if(!wall)return;
+  stage.addEventListener('mousemove',e=>{
+    if(stage.classList.contains('in'))return;
+    const r=stage.getBoundingClientRect();
+    const dx=((e.clientX-r.left)/r.width-.5)*14,dy=((e.clientY-r.top)/r.height-.5)*10;
+    wall.style.transform=`translate(${-dx}px,${-dy}px) scale(1.02)`;});
+  stage.addEventListener('mouseleave',()=>{if(!stage.classList.contains('in'))wall.style.transform=''});
+})();
+window.enterCrack=enterCrack;window.exitCrack=exitCrack;
+addEventListener('keydown',e=>{if(e.key==='Escape')exitCrack()});
+
+/* charts */
+scatter('map',C.map(c=>({n:c.n,x:c.x,y:c.y,c:c.c,r:c.n==='You'?13:14})));
+hbars('fund',['Cred','KreditBee','LenDenClub'],[806,476,10],['#e08896','#8089e8','#4cc3b6']);
+new IntersectionObserver((es,o)=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('#sigs .sbar i').forEach(i=>i.style.width=i.dataset.w+'%');o.disconnect()}})},{threshold:.3}).observe(document.getElementById('sigs'));
 </script>
 </body></html>

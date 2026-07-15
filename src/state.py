@@ -25,7 +25,9 @@ class AgentState(TypedDict, total=False):
     is_ambiguous: bool
     in_scope: bool
     clarification_question: str
-    analysis_intent: str
+    analysis_intent: str  # orchestrator brief for specialists (follows user lens)
+    analysis_lens: str  # auto-classified: customer|finance|competitor|strategy|growth|regulatory
+    sector: str  # the user's industry, e.g. "D2C apparel", "digital-lending NBFC"
     # Which specialist agents this query actually needs.
     route_flags: dict  # {"rbi": bool, "pestel": bool, "competitor": bool, "trend": bool}
 
@@ -43,6 +45,12 @@ class AgentState(TypedDict, total=False):
     unsupported_claims: list
     failing_agent: str
     retry_count: int
+
+    # Cross-examination round (agents challenge/corroborate each other before synthesis)
+    cross_messages: list  # [{source,target,source_label,target_label,kind,text}]
+
+    # Deep financial SWOT (+ TOWS) synthesized from the specialist reports
+    swot_report: str
 
     # Final outputs
     final_analysis: str
