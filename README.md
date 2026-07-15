@@ -373,4 +373,4 @@ evals/                    NormBench + RMC evaluation harness
 
 ## License
 
-Proprietary / All rights reserved unless a `LICENSE` file is present in this repository.
+MIT. Use it, fork it, ship it.
